@@ -89,6 +89,12 @@ class ModelTest extends UnitTestCase {
       'email'=>'dude@mail.com',
       'password'=>'myp4ss'
     )));
+    $current_timestamp = date('Y-m-d H:i:s');
+    $this->assertEqual("INSERT INTO users (email, password, created_at, updated_at) VALUES ('dude@mail.com', 'myp4ss', '".$current_timestamp."', '".$current_timestamp."')", $this->model->insert_into('users', array(
+      'email'=>'dude@mail.com',
+      'password'=>'myp4ss'
+    ),
+    array('timestamps'=>true)));
   }
 
   function testUpdate()
@@ -101,6 +107,18 @@ class ModelTest extends UnitTestCase {
       array( // CONDITIONS
         'id'=>'1'
       ))
+    );
+    // timestamps
+    $current_timestamp = date('Y-m-d H:i:s');
+    $this->assertEqual("UPDATE users SET email='julien@mail.com', name='julien', updated_at='".$current_timestamp."' WHERE id=1", $this->model->update('users', 
+      array( // DATA
+        'email'=>'julien@mail.com',
+        'name'=>'julien'
+      ),
+      array( // CONDITIONS
+        'id'=>'1'
+      ),
+      array('timestamps'=>true))
     );
     // multiple conditions
     $this->assertEqual("UPDATE users SET email='julien@mail.com', name='julien' WHERE id=1 AND email='julz@mail.com'", $this->model->update('users', 
