@@ -42,6 +42,25 @@ class Model extends Validator {
     return $sql;
   }
 
+  function update($table_name, $data, $conditions)
+  {
+    $sql = "UPDATE {$table_name} SET ";
+    $is_first = true;
+    foreach ($data as $key=>$value)
+    {
+      $sql .= ($is_first?'':', ').$key.'='.$this->_quote_wrap($value, $this->_get_field_datatype($key));
+      $is_first = false;
+    }
+    $sql .= ' WHERE ';
+    $is_first = true;
+    foreach ($conditions as $key=>$value)
+    {
+      $sql .= ($is_first?'':' AND ').$key.'='.$this->_quote_wrap($value, $this->_get_field_datatype($key));
+      $is_first = false;
+    }
+    return $sql;
+  }
+
   function get_posted_data()
   {
     return $this->_posted;

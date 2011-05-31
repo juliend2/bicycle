@@ -71,6 +71,9 @@ class ModelTest extends UnitTestCase {
   function setUp()
   {
     $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), array(
+        'id'=> array(
+          'data_type'=>'integer'
+        ),
         'email'=> array(
           'human_name'=>'Email',
           'type'=>'string',
@@ -93,6 +96,19 @@ class ModelTest extends UnitTestCase {
       'email'=>'dude@mail.com',
       'password'=>'myp4ss'
     )));
+  }
+
+  function testUpdate()
+  {
+    $this->assertEqual("UPDATE users SET email='julien@mail.com', name='julien' WHERE id=1", $this->model->update('users', 
+      array( // DATA
+        'email'=>'julien@mail.com',
+        'name'=>'julien'
+      ),
+      array( // CONDITIONS
+        'id'=>'1'
+      ))
+    );
   }
 }
 
