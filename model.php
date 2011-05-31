@@ -58,8 +58,8 @@ class Model extends Validator {
 
   function delete_from($table_name, $conditions)
   {
-    $sql = "DELETE FROM {$table_name}";
-    return $sql .' '. $this->where($conditions);
+    $sql = "DELETE FROM {$table_name} ";
+    return $sql . $this->where($conditions);
   }
 
   function where($conditions)
