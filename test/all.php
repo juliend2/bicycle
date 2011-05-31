@@ -3,15 +3,8 @@
 require_once('../../simpletest/unit_tester.php');
 require_once('../../simpletest/web_tester.php');
 require_once('../../simpletest/reporter.php');
-require_once('../functions.php');
 define('BASE_URL', 'http://localhost');
-require_once('../helpers.php');
-// model's deps:
-require_once('../lib/ez_sql/shared/ez_sql_core.php');
-require_once('../lib/ez_sql/mysql/ez_sql_mysql.php');
-require_once('../lib/julienphpformvalidation/validator.php');
-// end model's deps
-require_once('../model.php');
+require_once('../all.php');
 
 class HelpersTest extends UnitTestCase {
 
