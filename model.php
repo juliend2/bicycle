@@ -52,19 +52,19 @@ class Model extends Validator {
       $is_first = false;
     }
     $is_first = true;
-    $sql .= $this->where($conditions);
+    $sql .= ' '.$this->where($conditions);
     return $sql;
   }
 
   function delete_from($table_name, $conditions)
   {
     $sql = "DELETE FROM {$table_name}";
-    return $sql . $this->where($conditions);
+    return $sql .' '. $this->where($conditions);
   }
 
   function where($conditions)
   {
-    $sql = " WHERE ";
+    $sql = "WHERE ";
     $is_first = true;
     foreach ($conditions as $key=>$value)
     {
