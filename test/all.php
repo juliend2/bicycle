@@ -7,9 +7,9 @@ require_once('../functions.php');
 define('BASE_URL', 'http://localhost');
 require_once('../helpers.php');
 // model's deps:
-require_once('ez_sql/shared/ez_sql_core.php');
-require_once('ez_sql/mysql/ez_sql_mysql.php');
-require_once('julienphpformvalidation/validator.php');
+require_once('../lib/ez_sql/shared/ez_sql_core.php');
+require_once('../lib/ez_sql/mysql/ez_sql_mysql.php');
+require_once('../lib/julienphpformvalidation/validator.php');
 // end model's deps
 require_once('../model.php');
 
