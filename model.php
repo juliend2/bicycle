@@ -23,9 +23,14 @@ class Model extends Validator {
   // @params
   //  $table_name String: name of the table
   //  $data Array: data to be inserted
-  function insert_into($table_name, $data)
+  function insert_into($table_name, $data, $options=array())
   {
-    // get keys and values to be saved
+    if (!empty($options['timestamps']))
+    {
+      $current_datetime = date('Y-m-d H:i:s');
+      $safe['created_at'] = $current_datetime;
+      $safe['updated_at'] = $current_datetime;
+    }
     $sql = "INSERT INTO {$table_name} ";
     $field_strings = '';
     $value_strings = '';
