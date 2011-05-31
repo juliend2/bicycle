@@ -8,8 +8,9 @@ First, define a BASE_PATH (used by url_for and link_to):
 
 pre. define('BASE_PATH', 'http://localhost');
 
-include these files:
+include this file:
 
 pre. include_once 'bicycle/all.php';
+
 
 h2. HAVE FUN!
