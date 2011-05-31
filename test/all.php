@@ -109,6 +109,28 @@ class ModelTest extends UnitTestCase {
         'id'=>'1'
       ))
     );
+    // multiple conditions
+    $this->assertEqual("UPDATE users SET email='julien@mail.com', name='julien' WHERE id=1 AND email='julz@mail.com'", $this->model->update('users', 
+      array( // DATA
+        'email'=>'julien@mail.com',
+        'name'=>'julien'
+      ),
+      array( // CONDITIONS
+        'id'=>'1',
+        'email'=>'julz@mail.com'
+      ))
+    );
+    // NON-equal conditions
+    $this->assertEqual("UPDATE users SET email='julien@mail.com', name='julien' WHERE email IS NULL AND created_at > 2011-05-31 12:00:00", $this->model->update('users', 
+      array( // DATA
+        'email'=>'julien@mail.com',
+        'name'=>'julien'
+      ),
+      array( // CONDITIONS
+        'email IS NULL',
+        'created_at > 2011-05-31 12:00:00'
+      ))
+    );
   }
 }
 

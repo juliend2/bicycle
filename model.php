@@ -51,11 +51,25 @@ class Model extends Validator {
       $sql .= ($is_first?'':', ').$key.'='.$this->_quote_wrap($value, $this->_get_field_datatype($key));
       $is_first = false;
     }
-    $sql .= ' WHERE ';
+    $is_first = true;
+    $sql .= $this->where($conditions);
+    return $sql;
+  }
+
+  function where($conditions)
+  {
+    $sql = " WHERE ";
     $is_first = true;
     foreach ($conditions as $key=>$value)
     {
-      $sql .= ($is_first?'':' AND ').$key.'='.$this->_quote_wrap($value, $this->_get_field_datatype($key));
+      if (is_int($key))
+      {
+        $sql .= ($is_first?'':' AND ').$value;
+      }
+      else
+      {
+        $sql .= ($is_first?'':' AND ').$key.'='.$this->_quote_wrap($value, $this->_get_field_datatype($key));
+      }
       $is_first = false;
     }
     return $sql;
