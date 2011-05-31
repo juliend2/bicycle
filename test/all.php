@@ -132,6 +132,11 @@ class ModelTest extends UnitTestCase {
       ))
     );
   }
+
+  function testDelete()
+  {
+    $this->assertEqual("DELETE FROM users WHERE id=3", $this->model->delete_from('users', array('id'=>3)));
+  }
 }
 
 $test = new HelpersTest();
