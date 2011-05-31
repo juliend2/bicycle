@@ -6,6 +6,12 @@ require_once('../../simpletest/reporter.php');
 require_once('../functions.php');
 define('BASE_URL', 'http://localhost');
 require_once('../helpers.php');
+// model's deps:
+require_once('ez_sql/shared/ez_sql_core.php');
+require_once('ez_sql/mysql/ez_sql_mysql.php');
+require_once('julienphpformvalidation/validator.php');
+// end model's deps
+require_once('../model.php');
 
 class HelpersTest extends UnitTestCase {
 
@@ -60,11 +66,42 @@ class FunctionsTest extends UnitTestCase {
   }
 }
 
+class ModelTest extends UnitTestCase {
+
+  function setUp()
+  {
+    $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), array(
+        'email'=> array(
+          'human_name'=>'Email',
+          'type'=>'string',
+          'rules'=>array('not_empty'),
+          'data_type'=>'string'
+        ),
+        'password'=> array(
+          'human_name'=>'Password',
+          'type'=>'string',
+          'rules'=>array('not_empty'),
+          'data_type'=>'string'
+        )
+      )
+    );
+  }
+
+  function testInsert()
+  {
+    $this->assertEqual("INSERT INTO users (email, password) VALUES ('dude@mail.com', 'myp4ss')", $this->model->insert_into('users', array(
+      'email'=>'dude@mail.com',
+      'password'=>'myp4ss'
+    )));
+  }
+}
+
 $test = new HelpersTest();
 $test->run(new HtmlReporter('utf-8'));
 
 $test = new FunctionsTest();
 $test->run(new HtmlReporter('utf-8'));
 
-
+$test = new ModelTest();
+$test->run(new HtmlReporter('utf-8'));
 

@@ -19,17 +19,21 @@ class Model extends Validator {
 
 // public
 
+  // @retourn String: SQL statement
+  // @params
+  //  $table_name String: name of the table
+  //  $data Array: data to be inserted
   function insert_into($table_name, $data)
   {
     // get keys and values to be saved
     $sql = "INSERT INTO {$table_name} ";
-    $field_strings = array();
-    $value_strings = array();
+    $field_strings = '';
+    $value_strings = '';
     $is_first = true;
     foreach ($data as $key=>$value)
     {
-      $field_strings .= ($is_first?',':'').' '.$key;
-      $value_strings .= ($is_first?',':'').' '.$this->_quote_wrap($value, $this->_get_field_datatype($key));
+      $field_strings .= ($is_first?'':', ').$key;
+      $value_strings .= ($is_first?'':', ').$this->_quote_wrap($value, $this->_get_field_datatype($key));
       $is_first = false;
     }
     $sql .= '('.$field_strings.')';
