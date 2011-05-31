@@ -28,8 +28,8 @@ class Model extends Validator {
     if (!empty($options['timestamps']))
     {
       $current_datetime = date('Y-m-d H:i:s');
-      $safe['created_at'] = $current_datetime;
-      $safe['updated_at'] = $current_datetime;
+      $data['created_at'] = $current_datetime;
+      $data['updated_at'] = $current_datetime;
     }
     $sql = "INSERT INTO {$table_name} ";
     $field_strings = '';
@@ -47,8 +47,13 @@ class Model extends Validator {
     return $sql;
   }
 
-  function update($table_name, $data, $conditions)
+  function update($table_name, $data, $conditions, $options=array())
   {
+    if (!empty($options['timestamps']))
+    {
+      $current_datetime = date('Y-m-d H:i:s');
+      $data['updated_at'] = $current_datetime;
+    }
     $sql = "UPDATE {$table_name} SET ";
     $is_first = true;
     foreach ($data as $key=>$value)
