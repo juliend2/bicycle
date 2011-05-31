@@ -46,6 +46,8 @@ class HelpersTest extends UnitTestCase {
     $this->assertEqual('<option  value="cle">Valeur</option>', option_tag('cle', 'Valeur'));
     // select
     $this->assertEqual('<p  id="country_input_container"><label for="country_input" >Country</label><select id="country_input" name="country" ></select></p>', select_input('country', 'Country'));
+    // end form
+    $this->assertEqual('<p  id="envoyer_submit_button"><input type="submit" value="Envoyer" /></p></form>', end_form('Envoyer'));
   }
 }
 
