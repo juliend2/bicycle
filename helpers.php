@@ -35,10 +35,10 @@ function attr_to_string($attrs)
 // HTML helpers
 // ----------------------------------------------------------
 
-function link_to($label, $relative_path, $options = array())
+function link_to($label, $relative_path, $attr = array())
 {
   $absolute_path = url_for($relative_path);
-  return "<a href='{$absolute_path}'>{$label}</a>";
+  return "<a href=\"{$absolute_path}\" ".attr_to_string($attr).">{$label}</a>";
 }
 
 
