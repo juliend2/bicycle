@@ -6,6 +6,25 @@ require_once('../../simpletest/reporter.php');
 define('BASE_URL', 'http://localhost');
 require_once('../bicycle.php');
 
+class DispatcherTest extends UnitTestCase {
+  function testBasicUsage()
+  {
+    $dispatcher = new Dispatcher('/fr/section/subsection/param1:value1/param2:value2');
+    $segments = $dispatcher->get_segments();
+    $params = $dispatcher->get_params();
+    // test number of elements in arrays:
+    $this->assertEqual(3, count($segments));
+    $this->assertEqual(2, count($params));
+    // test params
+    $this->assertEqual('value1', $params['param1']);
+    $this->assertEqual('value2', $params['param2']);
+    // test segments
+    $this->assertEqual('fr', $segments[0]);
+    $this->assertEqual('section', $segments[1]);
+    $this->assertEqual('subsection', $segments[2]);
+  }
+}
+
 class HelpersTest extends UnitTestCase {
 
   function testGeneralHelpers()
@@ -149,6 +168,9 @@ class ModelTest extends UnitTestCase {
     $this->assertEqual("DELETE FROM users WHERE id=3", $this->model->delete_from('users', array('id'=>3)));
   }
 }
+
+$test = new DispatcherTest();
+$test->run(new HtmlReporter('utf-8'));
 
 $test = new HelpersTest();
 $test->run(new HtmlReporter('utf-8'));
