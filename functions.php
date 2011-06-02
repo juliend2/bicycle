@@ -71,3 +71,16 @@ function glob_templates($mask)
   return $file_names;
 }
 
+
+function _or()
+{
+  $arguments = func_get_args();
+  $nb_args = func_num_args();
+  for ($i = 0; $i < $nb_args; $i++)
+  {
+    if (!empty($arguments[$i]) || $i === $nb_args-1)
+    {
+      return $arguments[$i];
+    }
+  }
+}
