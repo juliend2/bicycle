@@ -101,6 +101,11 @@ class Model extends Validator {
     return $this->_db->query($sql);
   }
 
+  function get_row($sql)
+  {
+    return $this->_db->get_row($sql);
+  }
+
   function escape($string)
   {
     return mysql_real_escape_string($string);
