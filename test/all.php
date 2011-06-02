@@ -4,7 +4,7 @@ require_once('../../simpletest/unit_tester.php');
 require_once('../../simpletest/web_tester.php');
 require_once('../../simpletest/reporter.php');
 define('BASE_URL', 'http://localhost');
-require_once('../all.php');
+require_once('../bicycle.php');
 
 class HelpersTest extends UnitTestCase {
 
