@@ -17,12 +17,32 @@ class Model extends Validator {
     parent::__construct($schema, false); 
   }
 
+// --------------------------------------------------------------
 // public
 
-  // @retourn String: SQL statement
+  function get_posted_data()
+  {
+    return $this->_posted;
+  }
+
+  function escape_array($string_array)
+  {
+    $new_array = array();
+    foreach ($string_array as $key=>$string)
+    {
+      $new_array[$key] = self::escape($string);
+    }
+    return $new_array;
+  }
+
+
+// SQL abstractions ---------------------------------------------
+
+  // @return String: SQL statement
   // @params
   //  $table_name String: name of the table
   //  $data Array: data to be inserted
+  //  $options Array: 'timestamp'=>true
   function insert_into($table_name, $data, $options=array())
   {
     if (!empty($options['timestamps']))
@@ -47,6 +67,12 @@ class Model extends Validator {
     return $sql;
   }
 
+  // @return String: SQL statement
+  // @params
+  //  $table_name String: name of the table
+  //  $data Array: data to be updated
+  //  $conditions Array: array of conditions (k=>v or just string values)
+  //  $options Array: 'timestamp'=>true
   function update($table_name, $data, $conditions, $options=array())
   {
     if (!empty($options['timestamps']))
@@ -66,12 +92,19 @@ class Model extends Validator {
     return $sql;
   }
 
+  // @return String: SQL statement
+  // @params
+  //  $table_name String: name of the table
+  //  $conditions Array: array of conditions (k=>v or just string values)
   function delete_from($table_name, $conditions)
   {
     $sql = "DELETE FROM {$table_name} ";
     return $sql . $this->where($conditions);
   }
 
+  // @return String: SQL statement
+  // @params
+  //  $conditions Array: array of conditions (k=>v or just string values)
   function where($conditions)
   {
     $sql = "WHERE ";
@@ -91,10 +124,8 @@ class Model extends Validator {
     return $sql;
   }
 
-  function get_posted_data()
-  {
-    return $this->_posted;
-  }
+
+// ezSQL proxy methods ------------------------------------------
 
   function query($sql)
   {
@@ -111,16 +142,15 @@ class Model extends Validator {
     return mysql_real_escape_string($string);
   }
 
-  function escape_array($string_array)
-  {
-    $new_array = array();
-    foreach ($string_array as $key=>$string)
-    {
-      $new_array[$key] = self::escape($string);
-    }
-    return $new_array;
-  }
 
+// Filters ------------------------------------------------------
+
+  function before_save() { }
+
+  function after_save() { }
+
+
+// --------------------------------------------------------------
 // private
 
   function _get_field_datatype($fieldname)
@@ -147,16 +177,14 @@ class Model extends Validator {
     return $value;
   }
 
-// filters
 
-  function before_save() { }
-
-  function after_save() { }
-
+// --------------------------------------------------------------
 // protected
 
   function _sluggize($str, $separator='_')
   {
     return sluggize($str, $separator);
   }
+
+
 }
