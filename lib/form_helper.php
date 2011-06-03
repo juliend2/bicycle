@@ -85,11 +85,25 @@ class FormHelper {
   function _field_is_valid($name)
   {
     $fields = $this->_model_instance->get_fields();
-    if (!isset($fields[$name]))
+    $rules = $this->_model_instance->get_rules();
+    $schema = $this->_model_instance->get_schema();
+    if (isset($rules[$name]) && !isset($fields[$name]))
     {
       throw new FieldException('No field with this name');
     }
-    return $fields[$name]->get_is_valid();
+
+    if (isset($fields[$name])) // exist as a field, then check if valid
+    {
+      return $fields[$name]->get_is_valid();
+    }
+    elseif (isset($schema[$name])) // exists in schema, so it's still valid
+    {
+      return true;
+    }
+    else
+    {
+      throw new FieldException('No field with this name');
+    }
   }
 
   function _field_value($name, $value)

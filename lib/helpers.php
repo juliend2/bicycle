@@ -54,3 +54,16 @@ function p($string, $attr=array())
 }
 
 
+// @return String: <tr> tag with <td> tags in it
+// @params:
+//  $tds Array: content for each <td> element
+function tr($tds)
+{
+  $str = '<tr>';
+  foreach ($tds as $k=>$td)
+  {
+    $str .= "<td>{$td}</td>";
+  }
+  $str .= '</tr>';
+  return $str;
+}
