@@ -37,8 +37,14 @@ function attr_to_string($attrs)
 
 function link_to($label, $relative_path, $attr = array())
 {
+  $confirm = '';
+  if (isset($attr['confirm']))
+  {
+    $confirm = 'onclick=\'return confirm("'.$attr['confirm'].'");\' ';
+    unset($attr['confirm']);
+  }
   $absolute_path = url_for($relative_path);
-  return "<a href=\"{$absolute_path}\" ".attr_to_string($attr).">{$label}</a>";
+  return "<a href=\"{$absolute_path}\" ".$confirm."".attr_to_string($attr).">{$label}</a>";
 }
 
 
