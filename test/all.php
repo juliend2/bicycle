@@ -65,7 +65,7 @@ class FormHelperTest extends UnitTestCase
   function setUp()
   {
     global $schema;
-    $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), $schema);
+    $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), 'tablename', $schema);
   }
 
   function testFormHelper()
@@ -137,7 +137,7 @@ class ModelTest extends UnitTestCase
   function setUp()
   {
     global $schema;
-    $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), $schema);
+    $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), 'tablename', $schema);
   }
 
   function testInsert()

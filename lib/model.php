@@ -7,11 +7,13 @@
 class Model extends Validator {
 
   var $_db = null; // ezSQL_* instance
+  var $_table_name = '';
   var $_schema = array();
 
-  function Model($db, $schema)
+  function Model($db, $table_name, $schema)
   {
     $this->_db = $db;
+    $this->_table_name = $table_name;
     $this->_schema = $schema;
     // second arg is false because we don't want to immediately validate:
     parent::__construct($schema, false); 
@@ -24,6 +26,11 @@ class Model extends Validator {
   function get_posted_data()
   {
     return $this->_posted;
+  }
+
+  function get_table_name()
+  {
+    return $this->_table_name;
   }
 
   function get_schema()
