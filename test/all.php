@@ -6,7 +6,27 @@ require_once('../../simpletest/reporter.php');
 define('BASE_URL', 'http://localhost');
 require_once('../bicycle.php');
 
-class DispatcherTest extends UnitTestCase {
+$schema = array(
+  'id'=> array(
+    'data_type'=>'integer'
+  ),
+  'email'=> array(
+    'human_name'=>'Email',
+    'type'=>'string',
+    'rules'=>array('not_empty'),
+    'data_type'=>'string'
+  ),
+  'password'=> array(
+    'human_name'=>'Password',
+    'type'=>'string',
+    'rules'=>array('not_empty'),
+    'data_type'=>'string'
+  )
+);
+
+
+class DispatcherTest extends UnitTestCase
+{
 
   function testBasicUsage()
   {
@@ -27,7 +47,42 @@ class DispatcherTest extends UnitTestCase {
 
 }
 
-class HelpersTest extends UnitTestCase {
+class FormHelperTest extends UnitTestCase
+{
+
+  function setUp()
+  {
+    global $schema;
+    $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), $schema);
+  }
+
+  function testFormHelper()
+  {
+    $form = new FormHelper($this->model, $_POST);
+    // form
+    $this->assertEqual('<form action="page.php" method="POST" >', $form->form_tag('page.php'));
+    $this->assertEqual('<form action="page.php" method="GET" >', $form->form_tag('page.php', 'GET'));
+    $this->assertEqual('<form action="page.php" method="GET"  id="form">', $form->form_tag('page.php', 'GET', array('id'=>'form')));
+    // label
+    $this->assertEqual('<label for="email_input" >Email</label>', $form->label('Email', 'email'));
+    $this->assertEqual('<label for="email_input"  id="email_label">Email</label>', $form->label('Email', 'email', array('id'=>'email_label')));
+    // basic input
+    $this->assertEqual('<p  id="email_input_container"><label for="email_input" >Email</label><input type="text" id="email_input" name="email" value=""  class="form_input"/></p>',
+                      $form->basic_input('email', 'Email', 'text', '', array('class'=>'form_input')));
+    // text area
+    $this->assertEqual('<p  id="content_input_container"><label for="content_input" >Content</label><textarea id="content_input" name="content"  class="input">Joie</textarea></p>',
+                      $form->text_area('content', 'Content', 'Joie', array('class'=>'input')));
+    // option tag
+    $this->assertEqual('<option  value="cle">Valeur</option>', $form->option_tag('cle', 'Valeur'));
+    // select
+    $this->assertEqual('<p  id="country_input_container"><label for="country_input" >Country</label><select id="country_input" name="country" ></select></p>', $form->select_input('country', 'Country'));
+    // end form
+    $this->assertEqual('<p  id="envoyer_submit_button"><input type="submit" value="Envoyer" /></p></form>', $form->end_form('Envoyer'));
+  }
+}
+
+class HelpersTest extends UnitTestCase
+{
 
   function testGeneralHelpers()
   {
@@ -71,7 +126,8 @@ class HelpersTest extends UnitTestCase {
   }
 }
 
-class FunctionsTest extends UnitTestCase {
+class FunctionsTest extends UnitTestCase
+{
 
   function testStringsFunctions()
   {
@@ -83,28 +139,13 @@ class FunctionsTest extends UnitTestCase {
   }
 }
 
-class ModelTest extends UnitTestCase {
+class ModelTest extends UnitTestCase
+{
 
   function setUp()
   {
-    $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), array(
-        'id'=> array(
-          'data_type'=>'integer'
-        ),
-        'email'=> array(
-          'human_name'=>'Email',
-          'type'=>'string',
-          'rules'=>array('not_empty'),
-          'data_type'=>'string'
-        ),
-        'password'=> array(
-          'human_name'=>'Password',
-          'type'=>'string',
-          'rules'=>array('not_empty'),
-          'data_type'=>'string'
-        )
-      )
-    );
+    global $schema;
+    $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), $schema);
   }
 
   function testInsert()
@@ -175,6 +216,9 @@ class ModelTest extends UnitTestCase {
 }
 
 $test = new DispatcherTest();
+$test->run(new HtmlReporter('utf-8'));
+
+$test = new FormHelperTest();
 $test->run(new HtmlReporter('utf-8'));
 
 $test = new HelpersTest();

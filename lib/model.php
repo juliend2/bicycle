@@ -8,17 +8,24 @@ class Model extends Validator {
 
   var $_db = null; // ezSQL_* instance
   var $_schema = array();
+  var $_validator_instance = null;
 
   function Model($db, $schema)
   {
     $this->_db = $db;
     $this->_schema = $schema;
-    // second arg is false because we don't want to immediately validate
-    parent::__construct($schema, false); 
+    // second arg is false because we don't want to immediately validate:
+    $this->_validator_instance = parent::__construct($schema, false); 
   }
+
 
 // --------------------------------------------------------------
 // public
+
+  function get_validator()
+  {
+    return $this->_validator_instance;
+  }
 
   function get_posted_data()
   {
