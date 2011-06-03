@@ -35,15 +35,15 @@ class FormHelper {
     );
   }
 
-  function text_input($name, $label, $value='', $attr=array())
+  function text_input($name, $label=null, $value='', $attr=array())
   {
-    return $this->basic_input($name, $label, 'text', $this->_field_value($name,$value), $attr=array());
+    return $this->basic_input($name, $this->_get_label($name, $label), 'text', $this->_field_value($name,$value), $attr=array());
   }
 
-  function text_area($name, $label, $value='', $attr=array())
+  function text_area($name, $label=null, $value='', $attr=array())
   {
     return p(
-      $this->label($label, $name).'<textarea id="'.$name.'_input" name="'.$name.'" '.attr_to_string($attr).'>'.$this->_field_value($name,$value).'</textarea>',
+      $this->label($this->_get_label($name, $label), $name).'<textarea id="'.$name.'_input" name="'.$name.'" '.attr_to_string($attr).'>'.$this->_field_value($name,$value).'</textarea>',
       array('id'=>$name.'_input_container', 'class'=> !$this->_field_is_valid($name) ? 'not_valid' : '')
     );
   }
@@ -110,6 +110,19 @@ class FormHelper {
       {
         return $value;
       }
+    }
+  }
+
+  function _get_label($name, $label)
+  {
+    $schema = $this->_model_instance->get_schema();
+    if (!empty($schema[$name]['human_name']))
+    {
+      return $schema[$name]['human_name'];
+    }
+    else
+    {
+      return $label;
     }
   }
 }

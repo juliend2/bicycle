@@ -26,6 +26,11 @@ class Model extends Validator {
     return $this->_posted;
   }
 
+  function get_schema()
+  {
+    return $this->_schema;
+  }
+
   function escape_array($string_array)
   {
     $new_array = array();
