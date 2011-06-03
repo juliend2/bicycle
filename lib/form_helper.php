@@ -35,13 +35,13 @@ class FormHelper {
 
   function text_input($name, $label, $value='', $attr=array())
   {
-    return basic_input($name, $label, 'text', $value, $attr=array());
+    return basic_input($name, $label, 'text', $this->_field_value($name,$value), $attr=array());
   }
 
   function text_area($name, $label, $value='', $attr=array())
   {
     return p(
-      label($label, $name).'<textarea id="'.$name.'_input" name="'.$name.'" '.attr_to_string($attr).'>'.$value.'</textarea>',
+      label($label, $name).'<textarea id="'.$name.'_input" name="'.$name.'" '.attr_to_string($attr).'>'.$this->_field_value($name,$value).'</textarea>',
       array('id'=>$name.'_input_container', 'class'=> !$this->_field_is_valid($name) ? 'not_valid' : '')
     );
   }
@@ -84,6 +84,21 @@ class FormHelper {
   {
     $fields = $this->_model_instance->get_fields();
     return $fields[$name]->get_is_valid();
+  }
+
+  function _field_value($name, $value)
+  {
+    $model = $this->_model_instance;
+    if ($model->is_posted())
+    {
+      // return posted data
+      $fields = $model->get_fields();
+      return $fields[$name]->get_value();
+    }
+    else
+    {
+      return $value;
+    }
   }
 }
 
