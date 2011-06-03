@@ -29,7 +29,7 @@ class FormHelper {
   {
     return p(
       label($label, $name).'<input type="'.$type.'" id="'.$name.'_input" name="'.$name.'" value="'.$value.'" '.attr_to_string($attr).'/>',
-      array('id'=>$name.'_input_container')
+      array('id'=>$name.'_input_container', 'class'=> !$this->_field_is_valid($name) ? 'not_valid' : '')
     );
   }
 
@@ -42,7 +42,7 @@ class FormHelper {
   {
     return p(
       label($label, $name).'<textarea id="'.$name.'_input" name="'.$name.'" '.attr_to_string($attr).'>'.$value.'</textarea>',
-      array('id'=>$name.'_input_container')
+      array('id'=>$name.'_input_container', 'class'=> !$this->_field_is_valid($name) ? 'not_valid' : '')
     );
   }
 
@@ -63,7 +63,7 @@ class FormHelper {
     $select .= '</select>';
     return p(
       label($label, $name) . $select,
-      array('id'=>$name.'_input_container')
+      array('id'=>$name.'_input_container', 'class'=> !$this->_field_is_valid($name) ? 'not_valid' : '')
     );
   }
 
@@ -80,5 +80,10 @@ class FormHelper {
 // --------------------------------------------------------------
 // private
 
+  function _field_is_valid($name)
+  {
+    $fields = $this->_model_instance->get_fields();
+    return $fields[$name]->get_is_valid();
+  }
 }
 
