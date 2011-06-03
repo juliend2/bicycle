@@ -29,4 +29,12 @@ class Crud {
     }
   }
 
+  public static function destroy($get, $model_object, $options=array())
+  {
+    if (isset($get['delete']))
+    {
+      $model_object->query("DELETE FROM {$model_object->get_table_name()} WHERE id={$get['delete']}");
+      header('Location: index.php');
+    }
+  }
 }
