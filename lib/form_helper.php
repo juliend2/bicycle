@@ -95,15 +95,21 @@ class FormHelper {
   function _field_value($name, $value)
   {
     $model = $this->_model_instance;
+    $fields = $model->get_fields();
     if ($model->is_posted())
     {
-      // return posted data
-      $fields = $model->get_fields();
       return $fields[$name]->get_value();
     }
     else
     {
-      return $value;
+      if ($this->_db_object->{$name})
+      {
+        return $this->_db_object->{$name};
+      }
+      else
+      {
+        return $value;
+      }
     }
   }
 }
