@@ -21,6 +21,18 @@ $schema = array(
     'type'=>'string',
     'rules'=>array('not_empty'),
     'data_type'=>'string'
+  ),
+  'content'=> array(
+    'human_name'=>'Content',
+    'type'=>'text',
+    'rules'=>array('not_empty'),
+    'data_type'=>'string'
+  ),
+  'country'=> array(
+    'human_name'=>'Country',
+    'type'=>'select',
+    'rules'=>array('not_empty'),
+    'data_type'=>'string'
   )
 );
 
@@ -58,7 +70,7 @@ class FormHelperTest extends UnitTestCase
 
   function testFormHelper()
   {
-    $form = new FormHelper($this->model, $_POST);
+    $form = new FormHelper($this->model, null);
     // form
     $this->assertEqual('<form action="page.php" method="POST" >', $form->form_tag('page.php'));
     $this->assertEqual('<form action="page.php" method="GET" >', $form->form_tag('page.php', 'GET'));
@@ -67,17 +79,20 @@ class FormHelperTest extends UnitTestCase
     $this->assertEqual('<label for="email_input" >Email</label>', $form->label('Email', 'email'));
     $this->assertEqual('<label for="email_input"  id="email_label">Email</label>', $form->label('Email', 'email', array('id'=>'email_label')));
     // basic input
-    $this->assertEqual('<p  id="email_input_container"><label for="email_input" >Email</label><input type="text" id="email_input" name="email" value=""  class="form_input"/></p>',
+    $this->assertEqual('<p  id="email_input_container" class=""><label for="email_input" >Email</label><input type="text" id="email_input" name="email" value=""  class="form_input"/></p>',
                       $form->basic_input('email', 'Email', 'text', '', array('class'=>'form_input')));
     // text area
-    $this->assertEqual('<p  id="content_input_container"><label for="content_input" >Content</label><textarea id="content_input" name="content"  class="input">Joie</textarea></p>',
+    $this->assertEqual('<p  id="content_input_container" class=""><label for="content_input" >Content</label><textarea id="content_input" name="content"  class="input">Joie</textarea></p>',
                       $form->text_area('content', 'Content', 'Joie', array('class'=>'input')));
     // option tag
     $this->assertEqual('<option  value="cle">Valeur</option>', $form->option_tag('cle', 'Valeur'));
     // select
-    $this->assertEqual('<p  id="country_input_container"><label for="country_input" >Country</label><select id="country_input" name="country" ></select></p>', $form->select_input('country', 'Country'));
+    $this->assertEqual('<p  id="country_input_container" class=""><label for="country_input" >Country</label><select id="country_input" name="country" ></select></p>', $form->select_input('country', 'Country'));
     // end form
     $this->assertEqual('<p  id="envoyer_submit_button"><input type="submit" value="Envoyer" /></p></form>', $form->end_form('Envoyer'));
+    // exception
+    $this->expectException(new ExceptionExpectation(new FieldException('No field with this name')));
+    $form->text_area('innexistant', 'Innexistant', 'Fail');
   }
 }
 
@@ -100,29 +115,6 @@ class HelpersTest extends UnitTestCase
     $this->assertEqual('<a href="http://localhost/joie.html?k=value"  title="Joy">Joie</a>', link_to('Joie', '/joie.html?k=value', array('title'=>'Joy')));
     $this->assertEqual('<p >Joie!</p>', p('Joie!'));
     $this->assertEqual('<p  title="joie">Joie!</p>', p('Joie!', array('title'=>'joie')));
-  }
-
-  function testFormHelpers()
-  {
-    // form
-    $this->assertEqual('<form action="page.php" method="POST" >', form_tag('page.php'));
-    $this->assertEqual('<form action="page.php" method="GET" >', form_tag('page.php', 'GET'));
-    $this->assertEqual('<form action="page.php" method="GET"  id="form">', form_tag('page.php', 'GET', array('id'=>'form')));
-    // label
-    $this->assertEqual('<label for="email_input" >Email</label>', label('Email', 'email'));
-    $this->assertEqual('<label for="email_input"  id="email_label">Email</label>', label('Email', 'email', array('id'=>'email_label')));
-    // basic input
-    $this->assertEqual('<p  id="email_input_container"><label for="email_input" >Email</label><input type="text" id="email_input" name="email" value=""  class="form_input"/></p>',
-                      basic_input('email', 'Email', 'text', '', array('class'=>'form_input')));
-    // text area
-    $this->assertEqual('<p  id="content_input_container"><label for="content_input" >Content</label><textarea id="content_input" name="content"  class="input">Joie</textarea></p>',
-                      text_area('content', 'Content', 'Joie', array('class'=>'input')));
-    // option tag
-    $this->assertEqual('<option  value="cle">Valeur</option>', option_tag('cle', 'Valeur'));
-    // select
-    $this->assertEqual('<p  id="country_input_container"><label for="country_input" >Country</label><select id="country_input" name="country" ></select></p>', select_input('country', 'Country'));
-    // end form
-    $this->assertEqual('<p  id="envoyer_submit_button"><input type="submit" value="Envoyer" /></p></form>', end_form('Envoyer'));
   }
 }
 

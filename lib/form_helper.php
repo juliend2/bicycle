@@ -1,11 +1,13 @@
 <?php
 
+class FieldException extends Exception { }
+
 class FormHelper {
 
   var $_model_instance = null;
   var $_db_object = null;
 
-  function FormHelper($model_object, $db_object)
+  function FormHelper($model_object, $db_object=null)
   {
     $this->_model_instance = $model_object;
     $this->_db_object = $db_object;
@@ -28,20 +30,20 @@ class FormHelper {
   function basic_input($name, $label, $type='text', $value='', $attr=array())
   {
     return p(
-      label($label, $name).'<input type="'.$type.'" id="'.$name.'_input" name="'.$name.'" value="'.$value.'" '.attr_to_string($attr).'/>',
+      $this->label($label, $name).'<input type="'.$type.'" id="'.$name.'_input" name="'.$name.'" value="'.$value.'" '.attr_to_string($attr).'/>',
       array('id'=>$name.'_input_container', 'class'=> !$this->_field_is_valid($name) ? 'not_valid' : '')
     );
   }
 
   function text_input($name, $label, $value='', $attr=array())
   {
-    return basic_input($name, $label, 'text', $this->_field_value($name,$value), $attr=array());
+    return $this->basic_input($name, $label, 'text', $this->_field_value($name,$value), $attr=array());
   }
 
   function text_area($name, $label, $value='', $attr=array())
   {
     return p(
-      label($label, $name).'<textarea id="'.$name.'_input" name="'.$name.'" '.attr_to_string($attr).'>'.$this->_field_value($name,$value).'</textarea>',
+      $this->label($label, $name).'<textarea id="'.$name.'_input" name="'.$name.'" '.attr_to_string($attr).'>'.$this->_field_value($name,$value).'</textarea>',
       array('id'=>$name.'_input_container', 'class'=> !$this->_field_is_valid($name) ? 'not_valid' : '')
     );
   }
@@ -58,11 +60,11 @@ class FormHelper {
     $select = '<select id="'.$name.'_input" name="'.$name.'" '.attr_to_string($attr).'>';
     foreach ($options as $k=>$v)
     {
-      $select .= option_tag($k, $v, $k===$value);
+      $select .= $this->option_tag($k, $v, $k===$value);
     }
     $select .= '</select>';
     return p(
-      label($label, $name) . $select,
+      $this->label($label, $name) . $select,
       array('id'=>$name.'_input_container', 'class'=> !$this->_field_is_valid($name) ? 'not_valid' : '')
     );
   }
@@ -83,6 +85,10 @@ class FormHelper {
   function _field_is_valid($name)
   {
     $fields = $this->_model_instance->get_fields();
+    if (!isset($fields[$name]))
+    {
+      throw new FieldException('No field with this name');
+    }
     return $fields[$name]->get_is_valid();
   }
 
