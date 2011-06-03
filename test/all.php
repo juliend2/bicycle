@@ -7,6 +7,7 @@ define('BASE_URL', 'http://localhost');
 require_once('../bicycle.php');
 
 class DispatcherTest extends UnitTestCase {
+
   function testBasicUsage()
   {
     $dispatcher = new Dispatcher('/fr/section/subsection/param1:value1/param2:value2');
@@ -23,6 +24,7 @@ class DispatcherTest extends UnitTestCase {
     $this->assertEqual('section', $segments[1]);
     $this->assertEqual('subsection', $segments[2]);
   }
+
 }
 
 class HelpersTest extends UnitTestCase {
@@ -75,6 +77,9 @@ class FunctionsTest extends UnitTestCase {
   {
     $this->assertEqual('eblouissant', sluggize("éblouissant"));
     $this->assertEqual("èéîï", strtolower_utf8('ÈÉÎÏ'));
+    $this->assertEqual('lastvalue', _or('', array(), null, 'lastvalue'));
+    $this->assertEqual('joy', _or('', 'joy', array()));
+    $this->assertEqual('first', _or('first', 'joy', array()));
   }
 }
 
