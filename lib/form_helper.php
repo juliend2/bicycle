@@ -57,10 +57,11 @@ class FormHelper {
 
   function select_input($name, $label, $options=array(), $value=null, $attr=array())
   {
+    $value = $this->_field_value($name,$value);
     $select = '<select id="'.$name.'_input" name="'.$name.'" '.attr_to_string($attr).'>';
     foreach ($options as $k=>$v)
     {
-      $select .= $this->option_tag($k, $v, $k===$value);
+      $select .= $this->option_tag($k, $v, $k==$value);
     }
     $select .= '</select>';
     return p(
