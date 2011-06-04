@@ -57,6 +57,56 @@ class DispatcherTest extends UnitTestCase
     $this->assertEqual('subsection', $segments[2]);
   }
 
+  function testWithLocale()
+  {
+    $dispatcher = new Dispatcher('/fr/section/subsection/param1:value1/param2:value2', true);
+    $locale = $dispatcher->get_locale();
+    $segments = $dispatcher->get_segments();
+    $params = $dispatcher->get_params();
+    // test number of elements in arrays:
+    $this->assertEqual(2, count($segments));
+    $this->assertEqual(2, count($params));
+    // test params
+    $this->assertEqual('value1', $params['param1']);
+    $this->assertEqual('value2', $params['param2']);
+    // test locale
+    $this->assertEqual('fr', $locale);
+    // test segments
+    $this->assertEqual('section', $segments[0]);
+    $this->assertEqual('subsection', $segments[1]);
+  }
+
+  function testEmptyURI()
+  {
+    $dispatcher = new Dispatcher('/');
+    $locale = $dispatcher->get_locale();
+    $segments = $dispatcher->get_segments();
+    $params = $dispatcher->get_params();
+    // test number of elements in arrays:
+    $this->assertEqual(0, count($segments));
+    $this->assertEqual(0, count($params));
+
+    $dispatcher = new Dispatcher('', true);
+    $locale = $dispatcher->get_locale();
+    $segments = $dispatcher->get_segments();
+    $params = $dispatcher->get_params();
+    // test number of elements in arrays:
+    $this->assertEqual(0, count($segments));
+    $this->assertEqual(0, count($params));
+
+    // test locale
+    $this->assertEqual('', $locale);
+    $dispatcher = new Dispatcher('/', true);
+    $locale = $dispatcher->get_locale();
+    $segments = $dispatcher->get_segments();
+    $params = $dispatcher->get_params();
+    // test number of elements in arrays:
+    $this->assertEqual(0, count($segments));
+    $this->assertEqual(0, count($params));
+    // test locale
+    $this->assertEqual('', $locale);
+  }
+
 }
 
 class FormHelperTest extends UnitTestCase

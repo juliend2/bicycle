@@ -3,13 +3,16 @@
 class Dispatcher {
 
   var $_uri = '';
+  var $_is_multilingual = false;
+  var $_locale = '';
   var $_params = array();
   var $_param_separator = ':';
   var $_segments = '';
 
-  function Dispatcher($uri)
+  function Dispatcher($uri, $is_multilingual=false)
   {
     $this->_segments = explode('/', $uri);
+    $this->_is_multilingual = $is_multilingual;
 
     $this->_parse_uri();
   }
@@ -19,6 +22,11 @@ class Dispatcher {
     return $this->_segments;
   }
 
+  function get_locale()
+  {
+    return $this->_locale;
+  }
+
   function get_params()
   {
     return $this->_params;
@@ -26,9 +34,18 @@ class Dispatcher {
 
   function _parse_uri()
   {
-    if (!empty($this->_segments) && $this->_segments[0] ==='')
+    if (!empty($this->_segments) && $this->_segments[0] ==='') // remove empty element
     {
       array_shift($this->_segments);
+    }
+    if (!empty($this->_segments) && count($this->_segments) === 1 && $this->_segments[0] ==='') // remove empty element (the other side of an empty '/')
+    {
+      array_shift($this->_segments);
+    }
+
+    if ($this->_is_multilingual)
+    {
+      $this->_locale = array_shift($this->_segments);
     }
 
     foreach ($this->_segments as $k=>$segment) # populate params array
