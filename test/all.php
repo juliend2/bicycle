@@ -263,7 +263,7 @@ class MigrationTest extends UnitTestCase
   function setUp()
   {
     global $schema;
-    $this->model = new Model(new ezSQL_mysql('root', '', ''/*TODO: create table for tests*/, 'localhost'), 'tablename', $schema);
+    $this->db = new ezSQL_mysql('root', '', 'bicycle_tests', 'localhost');
   }
 
   function testCreateTable()
@@ -272,6 +272,8 @@ class MigrationTest extends UnitTestCase
     //   'email'=>'dude@mail.com',
     //   'password'=>'myp4ss'
     // )));
+    $migrator = new Migrator($this->db, "./db/migrations");
+    $migrator->migrate_all('up');
   }
 
 }
@@ -291,3 +293,5 @@ $test->run(new HtmlReporter('utf-8'));
 $test = new ModelTest();
 $test->run(new HtmlReporter('utf-8'));
 
+$test = new MigrationTest();
+$test->run(new HtmlReporter('utf-8'));
