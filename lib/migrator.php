@@ -165,12 +165,11 @@ class Migrator
 
   function _create_migrations_table()
   {
-    if( ! $this->_db->get_row( $this->_db->query("SHOW TABLES LIKE 'schema_migrations'")))
+    if( ! $this->_db->query("SHOW TABLES LIKE 'schema_migrations'"))
     {
       $query = create_table('schema_migrations', array(
         'migration_id'=>'integer'
       ));
-      echo $query;
       $this->_db->query($query);
     }
   }
