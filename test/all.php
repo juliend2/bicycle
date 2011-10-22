@@ -115,7 +115,7 @@ class FormHelperTest extends UnitTestCase
   function setUp()
   {
     global $schema;
-    $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), 'tablename', $schema);
+    $this->model = new Model(new ezSQL_mysql('root', '', ''/*TODO: create table for tests*/, 'localhost'), 'tablename', $schema);
   }
 
   function testFormHelper()
@@ -187,7 +187,7 @@ class ModelTest extends UnitTestCase
   function setUp()
   {
     global $schema;
-    $this->model = new Model(new ezSQL_mysql('root', 'root', ''/*TODO: create table for tests*/, 'localhost'), 'tablename', $schema);
+    $this->model = new Model(new ezSQL_mysql('root', '', ''/*TODO: create table for tests*/, 'localhost'), 'tablename', $schema);
   }
 
   function testInsert()
@@ -255,6 +255,25 @@ class ModelTest extends UnitTestCase
   {
     $this->assertEqual("DELETE FROM users WHERE id=3", $this->model->delete_from('users', array('id'=>3)));
   }
+}
+
+class MigrationTest extends UnitTestCase
+{
+
+  function setUp()
+  {
+    global $schema;
+    $this->model = new Model(new ezSQL_mysql('root', '', ''/*TODO: create table for tests*/, 'localhost'), 'tablename', $schema);
+  }
+
+  function testCreateTable()
+  {
+    // $this->assertEqual("INSERT INTO users (email, password) VALUES ('dude@mail.com', 'myp4ss')", $this->model->insert_into('users', array(
+    //   'email'=>'dude@mail.com',
+    //   'password'=>'myp4ss'
+    // )));
+  }
+
 }
 
 $test = new DispatcherTest();
