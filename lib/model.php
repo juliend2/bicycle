@@ -38,6 +38,9 @@ class Model extends Validator {
     return $this->_schema;
   }
 
+  // @return Array: escaped array
+  // @params
+  //  $string_array Array of Strings
   function escape_array($string_array)
   {
     $new_array = array();
@@ -171,6 +174,9 @@ class Model extends Validator {
 // --------------------------------------------------------------
 // private
 
+  // @return String: data type for the given field
+  // @params:
+  //  $fieldname String
   function _get_field_datatype($fieldname)
   {
     $datatype = 'string'; // set a default
@@ -186,6 +192,10 @@ class Model extends Validator {
     return $datatype;
   }
 
+  // @return String: quoted string
+  // @params:
+  //  $value String
+  //  $data_type String: (string, text, datetime, date)
   function _quote_wrap($value, $data_type)
   {
     if (in_array($data_type, array('string','text','datetime','date')))
@@ -203,6 +213,5 @@ class Model extends Validator {
   {
     return sluggize($str, $separator);
   }
-
 
 }
