@@ -264,16 +264,17 @@ class MigrationTest extends UnitTestCase
   {
     global $schema;
     $this->db = new ezSQL_mysql('root', '', 'bicycle_tests', 'localhost');
+    // remove all previously created tables
+    $this->db->query("DROP TABLE pages");
   }
 
   function testCreateTable()
   {
-    // $this->assertEqual("INSERT INTO users (email, password) VALUES ('dude@mail.com', 'myp4ss')", $this->model->insert_into('users', array(
-    //   'email'=>'dude@mail.com',
-    //   'password'=>'myp4ss'
-    // )));
     $migrator = new Migrator($this->db, "./db/migrations");
-    $migrator->migrate_all('up');
+    $migrator->migrate_all();
+    $tables = $this->db->get_results("SHOW TABLES");
+    $tables = array_map(f('$o','return $o->Tables_in_bicycle_tests;'),$tables);
+    $this->assertTrue(in_array('pages', $tables));
   }
 
 }

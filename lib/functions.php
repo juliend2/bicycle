@@ -84,3 +84,8 @@ function _or()
     }
   }
 }
+
+function f($args_string, $func_string)
+{
+  return create_function($args_string, $func_string);
+}

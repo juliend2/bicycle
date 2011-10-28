@@ -1,5 +1,8 @@
 <?php
 
+// @return String: mysql type
+// @params:
+//  $type String: rails-migration-style type
 function _get_mysql_type($type) {
     if ($type == 'string') {
       $mysql_type = 'VARCHAR(255)';
@@ -10,7 +13,9 @@ function _get_mysql_type($type) {
     } elseif ($type == 'datetime') {
       $mysql_type = 'DATETIME';
     }
-    return $mysql_type;
+
+    if (isset($mysql_type)) return $mysql_type;
+    else return false;
 }
 
 // add_column("pages", "title", "string");
@@ -58,15 +63,20 @@ function remove_column($table_name, $column_name) {
 // );
 
 function create_table($table_name, $columns) {
+  $has_timestamp = false;
   $sql = 'CREATE TABLE '.$table_name.' ('
        . 'id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,';
-  
+
   foreach($columns as $column=>$type) {
     $mysql_type = _get_mysql_type($type);
-    $sql .= $column . ' ' . $mysql_type;
+    if ($type == 'timestamps') {
+      $has_timestamp = true;
+    } else {
+      $sql .= $column . ' ' . $mysql_type . ', ';
+    }
   }
 
-  if (in_array('timestamps', $columns)) {
+  if ($has_timestamp) {
     $sql .= 'created_at DATETIME,'
           . 'updated_at DATETIME';
   }
@@ -85,27 +95,15 @@ function drop_table($table_name) {
   return "DROP TABLE ". $table_name .";";
 }
 
-class Migration
-{
-  var $_db;
-
-  function __construct($db)
-  {
-    $this->_db = $db;
-  }
-
-  function up(){}
-
-  function down(){}
-
-}
-
 class Migrator 
 {
   var $_db;
   var $_paths;
   var $_path_to_migrations;
 
+  // @params:
+  //  $db: ezSQL Database object
+  //  $path_to_migrations String
   function __construct($db, $path_to_migrations)
   {
     $this->_db = $db;
@@ -113,7 +111,7 @@ class Migrator
     $this->_create_migrations_table();
   }
   
-  function migrate_all($direction='up')
+  function migrate_all()
   {
     $this->_paths = glob($this->_path_to_migrations.'/*.php');
     foreach ($this->_paths as $path)
@@ -121,33 +119,29 @@ class Migrator
       $migration_name = basename($path, '.php');
       if (!$this->_is_migrated($migration_name))
       {
-        $this->migrate($path, $migration_name, $direction);
+        $this->migrate($path, $migration_name);
       }
     }
   }
 
-  function migrate($path, $migration_name, $direction)
+  function migrate($path, $migration_name)
   {
     include_once($path);
     list($v_num, $m_name) = $this->_explode_file_name($migration_name);
-    $class_name = $m_name.'_'.$v_num;
-    $migration = new $class_name($this->_db);
-    if ($direction == 'up')
-    {
-      $this->_execute_queries($migration->up($this->_db));
-      // TODO: add this migration into schema_migrations
-    } 
-    elseif ($direction == 'down')
-    {
-      $this->_execute_queries($migration->down($this->_db));
-      // TODO: remove this migration from schema_migrations
-    }
+    $function_name = $m_name.'_'.$v_num;
+    $this->_execute_queries($function_name());
+    $this->_save_migration_id($v_num);
+  }
+
+  function _save_migration_id($version_id)
+  {
+    $this->_db->query("INSERT INTO schema_migrations (migration_id) VALUES ({$version_id})");
   }
 
   function _is_migrated($path)
   {
     list($v_num, $m_name) = $this->_explode_file_name($path);
-    return (bool)$this->_db->get_results("SELECT count(*) FROM schema_migrations WHERE migration_id=".$v_num);
+    return (int)$this->_db->get_var("SELECT count(*) FROM schema_migrations WHERE migration_id=".$v_num) > 0;
   }
 
   function _explode_file_name($path)
