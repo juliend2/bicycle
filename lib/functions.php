@@ -55,8 +55,7 @@ function sluggize($string, $replacement = '_') {
 }
 
 
-function glob_templates($mask)
-{
+function glob_templates($mask) {
   $file_names = array();
   foreach(glob($mask) as $file)
   {
@@ -76,8 +75,7 @@ function glob_templates($mask)
 //  $hash Array: hash from which we get the value
 //  $key String: key to get the value
 //  $key_or_val String: what do we want from this hash? (value or key) 
-function get_key_or_val($hash, $key, $key_or_val='value')
-{
+function get_key_or_val($hash, $key, $key_or_val='value') {
   if ($key_or_val==='key') { $hash = array_flip($hash); }
   if (array_key_exists($key, $hash))
   {
@@ -89,13 +87,11 @@ function get_key_or_val($hash, $key, $key_or_val='value')
   }
 }
 
-function throw_error($error_string)
-{
+function throw_error($error_string) {
   trigger_error($error_string, E_USER_ERROR);
 }
 
-function _or()
-{
+function _or() {
   $arguments = func_get_args();
   $nb_args = func_num_args();
   for ($i = 0; $i < $nb_args; $i++)
@@ -109,8 +105,7 @@ function _or()
 
 // A bit of functional programming goodness...
 
-function f($args_string, $func_string)
-{
+function f($args_string, $func_string) {
   return create_function($args_string, $func_string);
 }
 
@@ -127,8 +122,7 @@ function filter($array, $callback) {
 //  $array Array: array that contains objects 
 //  $property String: name of the properties to get from each object
 //  $has_hashes Boolean: true if the array contains associative arrays
-function pluck($array, $property, $has_hashes = false)
-{
+function pluck($array, $property, $has_hashes = false) {
   $f_body = $has_hashes ? 
               'return $o["'.$property.'"];' : 
               'return $o->'.$property.';';

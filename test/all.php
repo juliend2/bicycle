@@ -37,11 +37,9 @@ $schema = array(
 );
 
 
-class DispatcherTest extends UnitTestCase
-{
+class DispatcherTest extends UnitTestCase {
 
-  function testBasicUsage()
-  {
+  function testBasicUsage() {
     $dispatcher = new Dispatcher('/fr/section/subsection/param1:value1/param2:value2');
     $segments = $dispatcher->get_segments();
     $params = $dispatcher->get_params();
@@ -57,8 +55,7 @@ class DispatcherTest extends UnitTestCase
     $this->assertEqual('subsection', $segments[2]);
   }
 
-  function testWithLocale()
-  {
+  function testWithLocale() {
     $dispatcher = new Dispatcher('/fr/section/subsection/param1:value1/param2:value2', true);
     $locale = $dispatcher->get_locale();
     $segments = $dispatcher->get_segments();
@@ -76,8 +73,7 @@ class DispatcherTest extends UnitTestCase
     $this->assertEqual('subsection', $segments[1]);
   }
 
-  function testEmptyURI()
-  {
+  function testEmptyURI() {
     $dispatcher = new Dispatcher('/');
     $locale = $dispatcher->get_locale();
     $segments = $dispatcher->get_segments();
@@ -109,17 +105,14 @@ class DispatcherTest extends UnitTestCase
 
 }
 
-class FormHelperTest extends UnitTestCase
-{
+class FormHelperTest extends UnitTestCase {
 
-  function setUp()
-  {
+  function setUp() {
     global $schema;
     $this->model = new Model(new ezSQL_mysql('root', '', ''/*TODO: create table for tests*/, 'localhost'), 'tablename', $schema);
   }
 
-  function testFormHelper()
-  {
+  function testFormHelper() {
     $form = new FormHelper($this->model, null);
     // form
     $this->assertEqual('<form action="page.php" method="POST" >', $form->form_tag('page.php'));
@@ -146,11 +139,9 @@ class FormHelperTest extends UnitTestCase
   }
 }
 
-class HelpersTest extends UnitTestCase
-{
+class HelpersTest extends UnitTestCase {
 
-  function testGeneralHelpers()
-  {
+  function testGeneralHelpers() {
     // url_for
     $this->assertEqual('http://localhost/joie', url_for('/joie'));
     $this->assertEqual('http://localhost/fr/joie?key=value', url_for('/fr/joie?key=value'));
@@ -159,8 +150,7 @@ class HelpersTest extends UnitTestCase
     $this->assertEqual(' href="joie.html" title="Joie"', attr_to_string(array('href'=>'joie.html','title'=>'Joie')));
   }
 
-  function testHTMLHelpers()
-  {
+  function testHTMLHelpers() {
     $this->assertEqual('<a href="http://localhost/joie.html" >Joie</a>', link_to('Joie', '/joie.html'));
     $this->assertEqual('<a href="http://localhost/joie.html?k=value"  title="Joy">Joie</a>', link_to('Joie', '/joie.html?k=value', array('title'=>'Joy')));
     $this->assertEqual('<p >Joie!</p>', p('Joie!'));
@@ -168,11 +158,9 @@ class HelpersTest extends UnitTestCase
   }
 }
 
-class FunctionsTest extends UnitTestCase
-{
+class FunctionsTest extends UnitTestCase {
 
-  function testStringsFunctions()
-  {
+  function testStringsFunctions() {
     $this->assertEqual('eblouissant', sluggize("éblouissant"));
     $this->assertEqual("èéîï", strtolower_utf8('ÈÉÎÏ'));
     $this->assertEqual('lastvalue', _or('', array(), null, 'lastvalue'));
@@ -181,17 +169,14 @@ class FunctionsTest extends UnitTestCase
   }
 }
 
-class ModelTest extends UnitTestCase
-{
+class ModelTest extends UnitTestCase {
 
-  function setUp()
-  {
+  function setUp() {
     global $schema;
     $this->model = new Model(new ezSQL_mysql('root', '', ''/*TODO: create table for tests*/, 'localhost'), 'tablename', $schema);
   }
 
-  function testInsert()
-  {
+  function testInsert() {
     $this->assertEqual("INSERT INTO users (email, password) VALUES ('dude@mail.com', 'myp4ss')", $this->model->insert_into('users', array(
       'email'=>'dude@mail.com',
       'password'=>'myp4ss'
@@ -204,8 +189,7 @@ class ModelTest extends UnitTestCase
     array('timestamps'=>true)));
   }
 
-  function testUpdate()
-  {
+  function testUpdate() {
     $this->assertEqual("UPDATE users SET email='julien@mail.com', name='julien' WHERE id=1", $this->model->update('users', 
       array( // DATA
         'email'=>'julien@mail.com',
@@ -251,25 +235,21 @@ class ModelTest extends UnitTestCase
     );
   }
 
-  function testDelete()
-  {
+  function testDelete() {
     $this->assertEqual("DELETE FROM users WHERE id=3", $this->model->delete_from('users', array('id'=>3)));
   }
 }
 
-class MigrationTest extends UnitTestCase
-{
+class MigrationTest extends UnitTestCase {
 
-  function setUp()
-  {
+  function setUp() {
     global $schema;
     $this->db = new ezSQL_mysql('root', '', 'bicycle_tests', 'localhost');
     // remove all previously created tables
     $this->db->query("DROP TABLE pages");
   }
 
-  function testMigrateAll()
-  {
+  function testMigrateAll() {
     $migrator = new Migrator($this->db, "./db");
     $migrator->migrate_all();
     // test that the pages was created
@@ -285,8 +265,7 @@ class MigrationTest extends UnitTestCase
     );
   }
 
-  function testMigrate()
-  {
+  function testMigrate() {
     $migrator = new Migrator($this->db, "./db");
     $migration = './db/migrations/20111022160601_create_pages.php';
     $migrator->migrate($migrator, basename($migration, '.php'));

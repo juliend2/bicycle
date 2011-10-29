@@ -101,8 +101,7 @@ function drop_table($table_name) {
 
 // @class Migrator
 // @author Julien Desrosiers
-class Migrator 
-{
+class Migrator {
   var $_db;
   var $_paths;
   var $_db_folder_path;
@@ -111,16 +110,14 @@ class Migrator
   // @params:
   //  $db: ezSQL Database object
   //  $db_folder_path String
-  function Migrator($db, $db_folder_path)
-  {
+  function Migrator($db, $db_folder_path) {
     $this->_db = $db;
     $this->_db_name = $this->_db->dbname;
     $this->_db_folder_path = $db_folder_path;
     $this->_create_migrations_table();
   }
   
-  function migrate_all()
-  {
+  function migrate_all() {
     $this->_paths = glob($this->_db_folder_path.'/migrations/*.php');
     foreach ($this->_paths as $path)
     {
@@ -132,8 +129,7 @@ class Migrator
     }
   }
 
-  function migrate($path, $migration_name)
-  {
+  function migrate($path, $migration_name) {
     include_once($path); // include migration file
     list($v_num, $m_name) = $this->_explode_file_name($migration_name);
     $function_name = $m_name.'_'.$v_num;
@@ -142,32 +138,27 @@ class Migrator
     $this->_write_schema_to_file($v_num);
   }
 
-  function _save_migration_id($version_id)
-  {
+  function _save_migration_id($version_id) {
     $this->_db->query("INSERT INTO schema_migrations (migration_id) VALUES ({$version_id})");
   }
 
-  function _is_migrated($path)
-  {
+  function _is_migrated($path) {
     list($v_num, $m_name) = $this->_explode_file_name($path);
     return (int)$this->_db->get_var("SELECT count(*) FROM schema_migrations WHERE migration_id=".$v_num) > 0;
   }
 
-  function _explode_file_name($path)
-  {
+  function _explode_file_name($path) {
     return explode('_', $path, 2);
   }
 
-  function _execute_queries($queries)
-  {
+  function _execute_queries($queries) {
     foreach ($queries as $query)
     {
       $this->_db->query($query);
     }
   }
 
-  function _create_migrations_table()
-  {
+  function _create_migrations_table() {
     if ( ! $this->_db->query("SHOW TABLES LIKE 'schema_migrations'") )
     {
       $query = create_table('schema_migrations', array(
@@ -177,15 +168,13 @@ class Migrator
     }
   }
 
-  function _load_schema_file()
-  {
+  function _load_schema_file() {
     $filename = $this->_db_folder_path.'/schema.php';
     include $filename;
     $this->_schema_content = $schema;
   }
 
-  function _write_schema_to_file($migration_number)
-  {
+  function _write_schema_to_file($migration_number) {
     $schema_dumper = new MigrationSchemaDumper($migration_number, $this->_db);
     $schema = $schema_dumper->write_schema_to('./db/schema.php');
     pr($schema);
