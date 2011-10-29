@@ -71,6 +71,28 @@ function glob_templates($mask)
   return $file_names;
 }
 
+// @return String: value from hash
+// @params:
+//  $hash Array: hash from which we get the value
+//  $key String: key to get the value
+//  $key_or_val String: what do we want from this hash? (value or key) 
+function get_key_or_val($hash, $key, $key_or_val='value')
+{
+  if ($key_or_val==='key') { $hash = array_flip($hash); }
+  if (array_key_exists($key, $hash))
+  {
+    return $hash[$key];
+  }
+  else
+  {
+    return null;
+  }
+}
+
+function throw_error($error_string)
+{
+  trigger_error($error_string, E_USER_ERROR);
+}
 
 function _or()
 {
@@ -89,3 +111,4 @@ function f($args_string, $func_string)
 {
   return create_function($args_string, $func_string);
 }
+

@@ -268,13 +268,21 @@ class MigrationTest extends UnitTestCase
     $this->db->query("DROP TABLE pages");
   }
 
-  function testCreateTable()
+  function testMigration()
   {
     $migrator = new Migrator($this->db, "./db/migrations");
     $migrator->migrate_all();
+    // test that the pages was created
     $tables = $this->db->get_results("SHOW TABLES");
     $tables = array_map(f('$o','return $o->Tables_in_bicycle_tests;'),$tables);
     $this->assertTrue(in_array('pages', $tables));
+    $desc = $this->db->get_results("DESC pages");
+    // test that these fields were added
+    $this->assertEqual(
+      array('id','title','slug','content','created_at','updated_at'), 
+      array_map(f('$o', 'return $o->Field;'), $desc)
+    );
+
   }
 
 }
@@ -285,6 +293,9 @@ $test->run(new HtmlReporter('utf-8'));
 $test = new FormHelperTest();
 $test->run(new HtmlReporter('utf-8'));
 
+$test = new MigrationTest();
+$test->run(new HtmlReporter('utf-8'));
+
 $test = new HelpersTest();
 $test->run(new HtmlReporter('utf-8'));
 
@@ -292,7 +303,4 @@ $test = new FunctionsTest();
 $test->run(new HtmlReporter('utf-8'));
 
 $test = new ModelTest();
-$test->run(new HtmlReporter('utf-8'));
-
-$test = new MigrationTest();
 $test->run(new HtmlReporter('utf-8'));
