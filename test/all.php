@@ -268,21 +268,38 @@ class MigrationTest extends UnitTestCase
     $this->db->query("DROP TABLE pages");
   }
 
-  function testMigration()
+  function testMigrateAll()
   {
-    $migrator = new Migrator($this->db, "./db/migrations");
+    $migrator = new Migrator($this->db, "./db");
     $migrator->migrate_all();
     // test that the pages was created
     $tables = $this->db->get_results("SHOW TABLES");
     $tables = array_map(f('$o','return $o->Tables_in_bicycle_tests;'),$tables);
     $this->assertTrue(in_array('pages', $tables));
-    $desc = $this->db->get_results("DESC pages");
     // test that these fields were added
+    $desc = $this->db->get_results("DESC pages");
+    $this->assertEqual(
+      array('id','title_fr','slug_fr','content_fr','created_at','updated_at',
+      'title_en','slug_en','content_en'), 
+      array_map(f('$o', 'return $o->Field;'), $desc)
+    );
+  }
+
+  function testMigrate()
+  {
+    $migrator = new Migrator($this->db, "./db");
+    $migration = './db/migrations/20111022160601_create_pages.php';
+    $migrator->migrate($migrator, basename($migration, '.php'));
+    // table created
+    $tables = $this->db->get_results("SHOW TABLES");
+    $tables = array_map(f('$o','return $o->Tables_in_bicycle_tests;'),$tables);
+    $this->assertTrue(in_array('pages', $tables));
+    // with the right fields 
+    $desc = $this->db->get_results("DESC pages");
     $this->assertEqual(
       array('id','title','slug','content','created_at','updated_at'), 
       array_map(f('$o', 'return $o->Field;'), $desc)
     );
-
   }
 
 }

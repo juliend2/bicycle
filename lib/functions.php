@@ -107,8 +107,31 @@ function _or()
   }
 }
 
+// A bit of functional programming goodness...
+
 function f($args_string, $func_string)
 {
   return create_function($args_string, $func_string);
+}
+
+function map($array, $callback) {
+  return array_map($callback, $array);
+}
+
+function filter($array, $callback) {
+  return array_filter($array, $callback);
+}
+
+// @return Array: array that contains the properties values 
+// @params:
+//  $array Array: array that contains objects 
+//  $property String: name of the properties to get from each object
+//  $has_hashes Boolean: true if the array contains associative arrays
+function pluck($array, $property, $has_hashes = false)
+{
+  $f_body = $has_hashes ? 
+              'return $o["'.$property.'"];' : 
+              'return $o->'.$property.';';
+  return map($array, f('$o', $f_body));
 }
 
