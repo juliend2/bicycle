@@ -194,18 +194,22 @@ class MigrationSchemaDumper {
   }
 
   function write_schema_to($file) {
+    $fp = fopen($file, 'w+');
+    $file_content = "<?php\n\n\$schema = ".$this->_get_schema_code().";";
+    fwrite($fp, $file_content);
+    fclose($fp);
+  }
+
+  function _get_schema_code() {
     $tables = filter(
                 pluck($this->_db_instance->get_results("SHOW TABLES"), "Tables_in_{$this->_db_instance->dbname}") ,
                 f('$e', 'return $e != "schema_migrations";') );
-    pr($tables);
-
     $schema = array(
       'schema_migration' => array('version'=>$this->_migration_number) );
     foreach ($tables as $table) {
       $schema[$table] = $this->_get_fields($table);
     }
-    pr($schema);
-    return $schema;
+    return var_export($schema, true);
   }
 
   function _get_fields($table_name) {
