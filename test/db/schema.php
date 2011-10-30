@@ -3,7 +3,7 @@
 $schema = array (
   'schema_migration' => 
   array (
-    'version' => '20111022160601',
+    'version' => '20111029080901',
   ),
   'pages' => 
   array (
@@ -16,21 +16,21 @@ $schema = array (
     ),
     1 => 
     array (
-      'title' => 
+      'title_fr' => 
       array (
         'type' => 'string',
       ),
     ),
     2 => 
     array (
-      'slug' => 
+      'slug_fr' => 
       array (
         'type' => 'string',
       ),
     ),
     3 => 
     array (
-      'content' => 
+      'content_fr' => 
       array (
         'type' => 'text',
       ),
@@ -47,6 +47,27 @@ $schema = array (
       'updated_at' => 
       array (
         'type' => 'datetime',
+      ),
+    ),
+    6 => 
+    array (
+      'title_en' => 
+      array (
+        'type' => 'string',
+      ),
+    ),
+    7 => 
+    array (
+      'slug_en' => 
+      array (
+        'type' => 'string',
+      ),
+    ),
+    8 => 
+    array (
+      'content_en' => 
+      array (
+        'type' => 'text',
       ),
     ),
   ),

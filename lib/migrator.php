@@ -1,5 +1,7 @@
 <?php
 
+$prev_schema = array();
+
 $migration_types = array(
   'string'=>'VARCHAR(255)',
   'integer'=>'INT(11)',
@@ -40,15 +42,16 @@ function remove_column($table_name, $column_name) {
 // rename_column('pages', 'title', 'title_fr');
 // => ALTER TABLE pages CHANGE title title_fr VARCHAR(255)
 function rename_column($table_name, $column_name, $new_column_name) {
-  $sql = "ALTER TABLE $table_name CHANGE $column_name "
-       . "$new_column_name "/* DATA TYPE */;
   // TODO: get the column's data type somewhere (schema.php?)
+  global $prev_schema;
+  $mysql_type = get_mysql_type($prev_schema[$table_name][$column_name]['type']);
+  $sql = "ALTER TABLE $table_name CHANGE $column_name "
+       . "$new_column_name $mysql_type" /* DATA TYPE */;
   return $sql;
 }
 
 // TODO
 // rename_table(old_name, new_name)
-// rename_column(table_name, column_name, new_column_name)
 // change_column(table_name, column_name, type, options)
 // add_index(table_name, column_names, options)
 // remove_index(table_name, :column => column_name)
@@ -74,7 +77,6 @@ function create_table($table_name, $columns) {
   $has_timestamp = false;
   $sql = "CREATE TABLE $table_name ("
        . "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,";
-
   foreach($columns as $column=>$type) {
     $mysql_type = get_mysql_type($type);
     if ($type == 'timestamps') {
@@ -83,7 +85,6 @@ function create_table($table_name, $columns) {
       $sql .= "$column $mysql_type, ";
     }
   }
-
   if ($has_timestamp) {
     $sql .= 'created_at DATETIME,'
           . 'updated_at DATETIME';
@@ -99,13 +100,13 @@ function drop_table($table_name) {
   return "DROP TABLE ". $table_name .";";
 }
 
+
 // @class Migrator
 // @author Julien Desrosiers
 class Migrator {
   var $_db;
   var $_paths;
   var $_db_folder_path;
-  var $_schema_content;
 
   // @params:
   //  $db: ezSQL Database object
@@ -116,20 +117,23 @@ class Migrator {
     $this->_db_folder_path = $db_folder_path;
     $this->_create_migrations_table();
   }
-  
+
+// --------------------------------------------------------------
+// public
+
   function migrate_all() {
     $this->_paths = glob($this->_db_folder_path.'/migrations/*.php');
-    foreach ($this->_paths as $path)
-    {
+    foreach ($this->_paths as $path) {
       $migration_name = basename($path, '.php');
-      if (!$this->_is_migrated($migration_name))
-      {
+      if (!$this->_is_migrated($migration_name)) {
         $this->migrate($path, $migration_name);
       }
     }
   }
 
   function migrate($path, $migration_name) {
+    global $prev_schema;
+    $prev_schema = $this->_load_schema_file();
     include_once($path); // include migration file
     list($v_num, $m_name) = $this->_explode_file_name($migration_name);
     $function_name = $m_name.'_'.$v_num;
@@ -137,6 +141,12 @@ class Migrator {
     $this->_save_migration_id($v_num);
     $this->_write_schema_to_file($v_num);
   }
+
+  // Migration methods ------------------------------------------
+
+
+// --------------------------------------------------------------
+// private
 
   function _save_migration_id($version_id) {
     $this->_db->query("INSERT INTO schema_migrations (migration_id) VALUES ({$version_id})");
@@ -152,15 +162,13 @@ class Migrator {
   }
 
   function _execute_queries($queries) {
-    foreach ($queries as $query)
-    {
+    foreach ($queries as $query) {
       $this->_db->query($query);
     }
   }
 
   function _create_migrations_table() {
-    if ( ! $this->_db->query("SHOW TABLES LIKE 'schema_migrations'") )
-    {
+    if ( ! $this->_db->query("SHOW TABLES LIKE 'schema_migrations'") ) {
       $query = create_table('schema_migrations', array(
         'migration_id'=>'integer'
       ));
@@ -171,13 +179,19 @@ class Migrator {
   function _load_schema_file() {
     $filename = $this->_db_folder_path.'/schema.php';
     include $filename;
-    $this->_schema_content = $schema;
+    $new_schema = array_shift($schema); // ['version'] => n
+    foreach ($schema as $t_key=>$table) {
+      foreach ($table as $f_key=>$field) {
+        $k = array_keys($field);
+        $new_schema[$t_key][$k[0]] = $field[$k[0]];
+      }
+    }
+    return $new_schema;
   }
 
   function _write_schema_to_file($migration_number) {
     $schema_dumper = new MigrationSchemaDumper($migration_number, $this->_db);
-    $schema = $schema_dumper->write_schema_to('./db/schema.php');
-    pr($schema);
+    $schema_dumper->write_schema_to('./db/schema.php');
   }
 
 }
