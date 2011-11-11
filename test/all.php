@@ -246,8 +246,10 @@ class MigrationTest extends UnitTestCase {
     global $schema;
     $this->db = new ezSQL_mysql('root', '', 'bicycle_tests', 'localhost');
     // remove all previously created tables
-    $this->db->query("DROP TABLE pages");
+    $this->db->query("DROP TABLE IF EXISTS pages");
+    $this->db->query("DROP TABLE IF EXISTS branches");
   }
+
   function testMigrate() {
     $migrator = new Migrator($this->db, "./db");
     $migration = './db/migrations/20111022160601_create_pages.php';
@@ -267,19 +269,18 @@ class MigrationTest extends UnitTestCase {
   function testMigrateAll() {
     $migrator = new Migrator($this->db, "./db");
     $migrator->migrate_all();
-    // test that the pages was created
+    // test that the branches was created
     $tables = $this->db->get_results("SHOW TABLES");
     $tables = array_map(f('$o','return $o->Tables_in_bicycle_tests;'),$tables);
-    $this->assertTrue(in_array('pages', $tables));
+    $this->assertTrue(in_array('branches', $tables));
     // test that these fields were added
-    $desc = $this->db->get_results("DESC pages");
+    $desc = $this->db->get_results("DESC branches");
     $this->assertEqual(
       array('id','title_fr','slug_fr','content_fr','created_at','updated_at',
       'title_en','slug_en','content_en'), 
       array_map(f('$o', 'return $o->Field;'), $desc)
     );
   }
-
 
 }
 

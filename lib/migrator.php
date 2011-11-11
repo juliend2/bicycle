@@ -42,13 +42,17 @@ function remove_column($table_name, $column_name) {
 // rename_column('pages', 'title', 'title_fr');
 // => ALTER TABLE pages CHANGE title title_fr VARCHAR(255)
 function rename_column($table_name, $column_name, $new_column_name) {
-  // TODO: get the column's data type somewhere (schema.php?)
   global $prev_schema;
   $mysql_type = get_mysql_type($prev_schema[$table_name][$column_name]['type']);
   $sql = "ALTER TABLE $table_name CHANGE $column_name "
-       . "$new_column_name $mysql_type" /* DATA TYPE */;
+       . "$new_column_name $mysql_type";
   return $sql;
 }
+
+function rename_table($old_table_name, $new_table_name) {
+  return "RENAME TABLE $old_table_name TO $new_table_name";
+}
+
 
 // TODO
 // rename_table(old_name, new_name)
@@ -97,7 +101,7 @@ function create_table($table_name, $columns) {
 // drop_table($table_name);
 // => DROP TABLE pages;
 function drop_table($table_name) {
-  return "DROP TABLE ". $table_name .";";
+  return "DROP TABLE $table_name;";
 }
 
 

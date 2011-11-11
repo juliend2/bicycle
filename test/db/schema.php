@@ -3,9 +3,9 @@
 $schema = array (
   'schema_migration' => 
   array (
-    'version' => '20111029080901',
+    'version' => '20111111174201',
   ),
-  'pages' => 
+  'branches' => 
   array (
     0 => 
     array (
