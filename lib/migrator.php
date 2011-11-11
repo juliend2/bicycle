@@ -55,11 +55,10 @@ function rename_table($old_table_name, $new_table_name) {
 
 
 // TODO
-// rename_table(old_name, new_name)
 // change_column(table_name, column_name, type, options)
 // add_index(table_name, column_names, options)
-// remove_index(table_name, :column => column_name)
-// remove_index(table_name, :name => index_name)
+// remove_index(table_name, array('column' => column_name))
+// remove_index(table_name, array('name' => index_name))
 // see: http://api.rubyonrails.org/classes/ActiveRecord/Migration.html
 
 // create_table("pages", array(
