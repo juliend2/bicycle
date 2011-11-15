@@ -4,9 +4,9 @@ Bicycle
 The command line interface
 --------------------------
 
-Bicycle includes a CLI, which is used to generate schema migrations.
+Bicycle includes a (Ruby) Command-line interface, which is used to generate valid schema migrations.
 
-To install it, add the cli folder into your shell $PATH, like this:
+To install it, add the cli folder into your shell $PATH, for example:
 
     export PATH="$PATH:/Applications/XAMPP/htdocs/lib/bicycle/cli"
 
