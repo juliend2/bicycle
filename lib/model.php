@@ -23,6 +23,11 @@ class Model extends Validator {
 // --------------------------------------------------------------
 // public
 
+  function get_db()
+  {
+    return $this->_db;
+  }
+
   function get_posted_data()
   {
     return $this->_posted;

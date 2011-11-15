@@ -113,7 +113,7 @@ class FormHelperTest extends UnitTestCase {
   }
 
   function testFormHelper() {
-    $form = new FormHelper($this->model, null);
+    $form = new FormHelper($this->model, $this->model->get_db());
     // form
     $this->assertEqual('<form action="page.php" method="POST" >', $form->form_tag('page.php'));
     $this->assertEqual('<form action="page.php" method="GET" >', $form->form_tag('page.php', 'GET'));

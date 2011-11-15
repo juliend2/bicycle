@@ -117,7 +117,7 @@ class FormHelper {
     }
     else
     {
-      if ($this->_db_object->{$name})
+      if (isset($this->_db_object->{$name}))
       {
         return $this->_db_object->{$name};
       }
