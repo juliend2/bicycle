@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+bicycle_help = %{Usage: bicycle COMMAND [ARGS]
+
+The most common bicycle commands are:
+  generate      (shortcut alias: "g")
+}
+
+generate_help = %{Usage: bicycle generate GENERATOR [args] [options]
+
+General options:
+  -h, [--help]     # Print generator's options and usage
+}
+
+# CONDITIONS:
+has_right_size = ARGV.size == 3
+is_generate = %w[generate g].include? ARGV[0]
+is_migration = ARGV[1] == 'migration'
+has_argument = ARGV[2]
+
+def underscore(camel_cased_word)
+  camel_cased_word.to_s.gsub(/::/, '/').
+   gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+   gsub(/([a-z\d])([A-Z])/,'\1_\2').
+   tr("-", "_").
+   downcase
+end
+
+
+def migration_php_code(date, migration_name)
+  %{<?php
+function #{underscore(migration_name)}_#{date} () {
+  return array(
+  );
+}
+  }
+end
+
+if has_right_size && is_generate && is_migration && has_argument
+  # GENERATE
+  date = Time.now.strftime("%Y%m%d%H%M%S")
+  migration_name = ARGV[2]
+  migrations_dir = "db/migrations"
+  migrations_full_dir = "#{Dir.pwd}/#{migrations_dir}"
+  if File.directory?(migrations_full_dir)
+    basename = "#{date}_#{underscore(migration_name)}.php"
+    full_file_path = "#{migrations_full_dir}/#{basename}"
+    File.open(full_file_path, 'w') {|f| f.write(migration_php_code(date, migration_name)) }
+    puts "Created: ./#{migrations_dir}/#{basename}"
+  else
+    puts "Error: You must be in a bicycle project directory to run this command."
+  end
+else
+  if is_generate
+    puts generate_help
+  else
+    puts bicycle_help
+  end
+end
+
