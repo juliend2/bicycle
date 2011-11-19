@@ -134,6 +134,7 @@ class Migrator {
       $migration_name = basename($path, '.php');
       if (!$this->_is_migrated($migration_name)) {
         $this->migrate($path, $migration_name);
+      } else {
       }
     }
   }
@@ -177,7 +178,7 @@ class Migrator {
   function _create_migrations_table() {
     if ( ! $this->_db->query("SHOW TABLES LIKE 'schema_migrations'") ) {
       $query = create_table('schema_migrations', array(
-        'migration_id'=>'integer'
+        'migration_id'=>'string'
       ));
       $this->_db->query($query);
     }
@@ -186,10 +187,10 @@ class Migrator {
   function _load_schema_file() {
     $filename = $this->_db_folder_path.'/schema.php';
     // there is no schema file yet, just return an array that is similar
-    if (!file_exists($filename)) {
-      return array('schema_migration'=>array('version'=>'0'));
-    }
+    $default_schema = array('schema_migration'=>array('version'=>'0'));
+    if (!file_exists($filename)) { return $default_schema; }
     include $filename;
+    if (!isset($schema)) { $schema = $default_schema; }
     $new_schema = array_shift($schema); // ['version'] => n
     foreach ($schema as $t_key=>$table) {
       foreach ($table as $f_key=>$field) {
