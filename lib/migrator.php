@@ -90,8 +90,9 @@ function create_table($table_name, $columns) {
   }
   if ($has_timestamp) {
     $sql .= 'created_at DATETIME,'
-          . 'updated_at DATETIME';
+          . 'updated_at DATETIME,';
   }
+  $sql = rtrim($sql, ' ,'); // remove the last comma of this query
   $sql .= ');';
 
   return $sql;
