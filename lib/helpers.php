@@ -67,3 +67,37 @@ function tr($tds)
   $str .= '</tr>';
   return $str;
 }
+
+/*
+ * $objects is a collection of objects
+ * $fields is an array of the fields to display in the table, i.e:
+ *  array(
+ *    'title' => 'Title',
+ *    'content' => 'Content'
+ *  )
+ */
+function index_table($objects, $fields) {
+?>
+  <?php if($objects): ?>
+    <table>
+    <tr>
+      <?php foreach($fields as $field => $fieldname): ?>
+      <th><?php e($fieldname) ?></th>
+      <?php endforeach ?> 
+      <th></th>
+      <th></th>
+    </tr>
+    <?php foreach($objects as $object): ?>
+    <tr>
+      <?php foreach($fields as $field => $fieldname): ?>
+      <td><?php e($object->{$field}) ?></td>
+      <?php endforeach ?>
+      <td><?php e(link_to('Edit',"/admin/pages/edit.php?id={$object->id}")) ?></td>
+      <td><?php e(link_to('Delete',"/admin/pages/index.php?delete={$object->id}", array('confirm'=>'Are you sure?'))) ?></td>
+    </tr>
+    <?php endforeach ?>
+    </table>
+  <?php endif ?>
+<?php
+  
+}

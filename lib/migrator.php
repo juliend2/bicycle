@@ -134,7 +134,6 @@ class Migrator {
       $migration_name = basename($path, '.php');
       if (!$this->_is_migrated($migration_name)) {
         $this->migrate($path, $migration_name);
-      } else {
       }
     }
   }
