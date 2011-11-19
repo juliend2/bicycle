@@ -118,7 +118,10 @@ class Migrator {
   function Migrator($db, $db_folder_path) {
     $this->_db = $db;
     $this->_db_name = $this->_db->dbname;
-    $this->_db_folder_path = $db_folder_path;
+    $this->_db_folder_path = realpath($db_folder_path);
+    if (!is_writable($this->_db_folder_path.'/schema.php')) {
+      echo "You need to create schema.php and make it writable in ".$this->_db_folder_path.' before you can run your migrations'; die;
+    }
     $this->_create_migrations_table();
   }
 
@@ -182,6 +185,10 @@ class Migrator {
 
   function _load_schema_file() {
     $filename = $this->_db_folder_path.'/schema.php';
+    // there is no schema file yet, just return an array that is similar
+    if (!file_exists($filename)) {
+      return array('schema_migration'=>array('version'=>'0'));
+    }
     include $filename;
     $new_schema = array_shift($schema); // ['version'] => n
     foreach ($schema as $t_key=>$table) {
@@ -195,7 +202,7 @@ class Migrator {
 
   function _write_schema_to_file($migration_number) {
     $schema_dumper = new MigrationSchemaDumper($migration_number, $this->_db);
-    $schema_dumper->write_schema_to('./db/schema.php');
+    $schema_dumper->write_schema_to($this->_db_folder_path.'/schema.php');
   }
 
 }
