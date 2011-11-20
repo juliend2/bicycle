@@ -24,3 +24,8 @@ Then, include this file:
 
     include_once 'bicycle/all.php';
 
+License
+-------
+
+Bicycle is released under the MIT license.
+
