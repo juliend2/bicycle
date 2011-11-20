@@ -100,3 +100,9 @@ function index_table($objects, $fields) {
   <?php endif ?>
 <?php
 }
+
+// prints a javascript redirect with the given parameter as the destination URL
+// $location : URL that we redirect to
+function javascript_redirect_to($location) {
+  echo "<script type='text/javascript'>window.location.href = '".$location."'; </script>";
+}

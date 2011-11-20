@@ -11,7 +11,7 @@ class Crud {
       {
         $safe = Model::escape_array($model_object->get_posted_data());
         $model_object->query($model_object->update($model_object->get_table_name(), $safe, array('id'=>$id), $options));
-        header('Location: index.php');
+        javascript_redirect_to('index.php');
       }
     }
   }
@@ -24,7 +24,7 @@ class Crud {
       {
         $safe = Model::escape_array($model_object->get_posted_data());
         $model_object->query($model_object->insert_into($model_object->get_table_name(), $safe, $options));
-        header('Location: index.php');
+        javascript_redirect_to('index.php');
       }
     }
   }
@@ -34,7 +34,7 @@ class Crud {
     if (isset($get['id']))
     {
       $model_object->query("DELETE FROM {$model_object->get_table_name()} WHERE id={$get['id']}");
-      header('Location: index.php');
+      javascript_redirect_to('index.php');
     }
   }
 }
