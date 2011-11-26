@@ -1,5 +1,16 @@
 <?php
 
+// Get configuration values by key
+function config($key) {
+  global $config;
+  if (isset($config[$key])) {
+    return $config[$key];
+  } else {
+    trigger_error("Config Error: $key not found in \$config.", E_USER_ERROR);
+  }
+}
+
+
 // the strtolower version to support most amount of languages including russian, french and so on: 
 // (thanks to leha_grobov on php.net)
 function strtolower_utf8($string){
