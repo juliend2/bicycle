@@ -68,13 +68,11 @@ function sluggize($string, $replacement = '_') {
 
 function glob_templates($mask) {
   $file_names = array();
-  foreach(glob($mask) as $file)
-  {
+  foreach(glob($mask) as $file) {
     $content = file_get_contents($file);
     // get the template's name
     preg_match('/<?'.'php\s*\/\/\s*Template\s*:\s*([^\n]+)/', $content, $match);
-    if (!empty($match[1]))
-    {
+    if (!empty($match[1])) {
       $file_names[basename($file)] = $match[1]; // add it to the file_names
     }
   }
@@ -88,8 +86,7 @@ function glob_templates($mask) {
 //  $key_or_val String: what do we want from this hash? (value or key) 
 function get_key_or_val($hash, $key, $key_or_val='value') {
   if ($key_or_val==='key') { $hash = array_flip($hash); }
-  if (array_key_exists($key, $hash))
-  {
+  if (array_key_exists($key, $hash)) {
     return $hash[$key];
   }
   else
@@ -105,10 +102,8 @@ function throw_error($error_string) {
 function _or() {
   $arguments = func_get_args();
   $nb_args = func_num_args();
-  for ($i = 0; $i < $nb_args; $i++)
-  {
-    if (!empty($arguments[$i]) || $i === $nb_args-1)
-    {
+  for ($i = 0; $i < $nb_args; $i++) {
+    if (!empty($arguments[$i]) || $i === $nb_args-1) {
       return $arguments[$i];
     }
   }
