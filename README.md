@@ -8,7 +8,7 @@ Bicycle includes a (Ruby) Command-line interface, which is used to generate vali
 
 To install it, add the cli folder into your shell $PATH, for example:
 
-    export PATH="$PATH:/Applications/XAMPP/htdocs/lib/bicycle/cli"
+    export PATH="$PATH:/Applications/XAMPP/htdocs/lib/bicycle/bin"
 
 This assumes that you have a centralized copy of the bicycle repository for all
 your bicycle apps.
