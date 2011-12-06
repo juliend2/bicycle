@@ -109,6 +109,10 @@ function _or() {
   }
 }
 
+function respond404(){
+  header((isset($_SERVER['FCGI_SERVER_VERSION'])?'Status:':'HTTP/1.0') . ' 404 Not Found');
+}
+
 // A bit of functional programming goodness...
 
 function f($args_string, $func_string) {
