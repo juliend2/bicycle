@@ -24,6 +24,26 @@ Then, include this file:
 
     include_once 'bicycle/all.php';
 
+
+Motivations
+-----------
+
+I want routes that lead to views without the burden of a Controller. And from 
+the views, query the models directly.
+
+I want something i can install on the dirtiest, cheapest, low-end hosting
+(where SSH is not an option).
+
+I want schema migrations, without the command-line (running them via an 'admin' 
+section).
+
+I want clean URLs, but i want my sites to still work without ModRewrite.
+
+I want to create sites that can run on PHP4.
+
+
+I want something for the dirty roads.
+
 License
 -------
 
