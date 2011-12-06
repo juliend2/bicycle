@@ -134,7 +134,7 @@ class FormHelperTest extends UnitTestCase {
     // end form
     $this->assertEqual('<p  id="envoyer_submit_button"><input type="submit" value="Envoyer" /></p></form>', $form->end_form('Envoyer'));
     // exception
-    $this->expectException(new ExceptionExpectation(new FieldException('No field with this name')));
+    $this->expectError(new PatternExpectation('/No field with this name/'));
     $form->text_area('innexistant', 'Innexistant', 'Fail');
   }
 }

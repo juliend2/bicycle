@@ -1,7 +1,5 @@
 <?php
 
-class FieldException extends Exception { }
-
 class FormHelper {
 
   var $_model_instance = null;
@@ -78,7 +76,7 @@ class FormHelper {
     $rules = $this->_model_instance->get_rules();
     $schema = $this->_model_instance->get_schema();
     if (isset($rules[$name]) && !isset($fields[$name])) {
-      throw new FieldException('No field with this name');
+      throw_error('No field with this name');
     }
 
     if (isset($fields[$name])) // exist as a field, then check if valid
@@ -91,7 +89,7 @@ class FormHelper {
     }
     else
     {
-      throw new FieldException('No field with this name');
+      throw_error('No field with this name');
     }
   }
 
