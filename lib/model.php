@@ -99,7 +99,6 @@ class Model extends Validator {
     }
     $is_first = true;
     $sql .= ' '.$this->where($conditions);
-    print $sql;
     return $sql;
   }
 
