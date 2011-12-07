@@ -33,6 +33,15 @@ class FormHelper {
     return $this->basic_input($name, $this->_get_label($name, $label), 'text', $this->_field_value($name,$value), $attr=array());
   }
 
+  function check_box($name, $label=null, $value='', $attr=array()) {
+    return p(
+      $this->label($this->_get_label($name, $label), $name).'<input type="checkbox" id="'.$name.'_input" name="'.$name.'" '
+      . ($this->_field_value($name, $value) ? 'checked="checked"' : '') .' '. attr_to_string($attr).'/>'
+      ,
+      array('id'=>$name.'_input_container', 'class'=> !$this->_field_is_valid($name) ? 'not_valid' : '')
+    );
+  }
+
   function text_area($name, $label=null, $value='', $attr=array()) {
     return p(
       $this->label($this->_get_label($name, $label), $name).'<textarea id="'.$name.'_input" name="'.$name.'" '.attr_to_string($attr).'>'.$this->_field_value($name,$value).'</textarea>',
@@ -79,36 +88,35 @@ class FormHelper {
       throw_error('No field with this name');
     }
 
-    if (isset($fields[$name])) // exist as a field, then check if valid
-    {
+    if (isset($fields[$name])) { // exist as a field, then check if valid
       return $fields[$name]->get_is_valid();
-    }
-    elseif (isset($schema[$name])) // exists in schema, so it's still valid
-    {
+    } elseif (isset($schema[$name])) { // exists in schema, so it's still valid
       return true;
-    }
-    else
-    {
+    } else {
       throw_error('No field with this name');
+      return false;
     }
   }
 
-  function _field_value($name, $value) {
+  // get the field's value from the database or from its $value parameter (fallback)
+  function _field_value($name, $value, $type='text') {
     $model = $this->_model_instance;
     $fields = $model->get_fields();
     if ($model->is_posted()) {
-      return $fields[$name]->get_value();
-    }
-    else
-    {
+      return $this->_normalize_value($fields[$name]->get_value(), $type);
+    } else {
       if (isset($this->_db_object->{$name})) {
-        return $this->_db_object->{$name};
-      }
-      else
-      {
-        return $value;
+        return $this->_normalize_value($this->_db_object->{$name}, $type);
       }
     }
+    return $value;
+  }
+
+  function _normalize_value($value, $type) {
+    if ($type == 'checkbox') {
+      return $value ? 'checked="checked"' : '';
+    }
+    return $value;
   }
 
   function _get_label($name, $label) {

@@ -92,11 +92,14 @@ class Model extends Validator {
     $sql = "UPDATE {$table_name} SET ";
     $is_first = true;
     foreach ($data as $key=>$value) {
-      $sql .= ($is_first?'':', ').$key.'='.$this->_quote_wrap($value, $this->_get_field_datatype($key));
+      $type = $this->_get_field_datatype($key);
+      if ($type == 'boolean') { $value = $value ? '1' : '0'; }
+      $sql .= ($is_first?'':', ').$key.'='.$this->_quote_wrap($value, $type);
       $is_first = false;
     }
     $is_first = true;
     $sql .= ' '.$this->where($conditions);
+    print $sql;
     return $sql;
   }
 

@@ -95,8 +95,19 @@ function get_key_or_val($hash, $key, $key_or_val='value') {
   }
 }
 
-function throw_error($error_string) {
-  trigger_error($error_string, E_USER_ERROR);
+function error_handler($level, $message, $file, $line, $context) {
+    // Handle user errors, warnings, and notices ourself
+    if($level === E_USER_ERROR || $level === E_USER_WARNING || $level === E_USER_NOTICE) {
+        echo '<strong>Error:</strong> ' . $message;
+        return true; // And prevent the PHP error handler from continuing
+    }
+    return false; // Otherwise, use PHP's error handler
+}
+
+function throw_error($error_string, $level = null) {
+  if ($level==null) { $level = E_USER_NOTICE; }
+  $callee = next(debug_backtrace());
+  trigger_error($error_string.' in <strong>'.$callee['file'].'</strong> on line <strong>'.$callee['line'].'</strong>', $level);
 }
 
 function _or() {

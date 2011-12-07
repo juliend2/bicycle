@@ -1,6 +1,9 @@
 <?php
 
 ini_set('display_errors', 1); // DEV ONLY! Comment this line before going live
+//Use our custom handler
+set_error_handler('error_handler');
+
 
 $config = array(
 

@@ -7,6 +7,7 @@ $migration_types = array(
   'integer'=>'INT(11)',
   'text'=>'TEXT',
   'datetime'=>'DATETIME',
+  'boolean'=>'TINYINT(1)'
 );
 
 // @return String: mysql type
