@@ -36,12 +36,12 @@ class Dispatcher {
       array_shift($this->_segments);
     }
 
-    if ($this->_is_multilingual) {
+    if ($this->_is_multilingual && (isset($this->_segments[0]) && strpos($this->_segments[0], ':') === false)) {
       $this->_locale = array_shift($this->_segments);
     }
 
     foreach ($this->_segments as $k=>$segment) { # populate params array
-      # TODO: remember to NOT allow ":" characters on slug values
+      # TODO: remember to NOT allow ":" characters on slug values during pages validation
 
       $found = strpos($segment, $this->_param_separator);
 
