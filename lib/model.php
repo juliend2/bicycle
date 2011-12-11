@@ -1,63 +1,49 @@
 <?php
-// DEPENDS ON :
-//  -A GLOBAL $db VARIABLE IN bicycle.php
-//  -A GLOBAL sluggize FUNCTION IN functions.php
-//
-// Base model class
-class Model extends Validator {
 
-  var $_db = null; // ezSQL_* instance
-  var $_table_name = '';
+class Model {
+
   var $_schema = array();
 
-  function Model($db, $table_name, $schema) {
-    $this->_db = $db;
-    $this->_table_name = $table_name;
+  function Model($schema) {
     $this->_schema = $schema;
-    // second arg is false because we don't want to immediately validate:
-    parent::__construct($schema, false); 
   }
 
+  // Filters
 
-// --------------------------------------------------------------
-// public
+  function before_validate() {}
+  function after_validate() {}
+  function before_save() {}
+  function after_save() {}
 
-  function get_db() {
-    return $this->_db;
-  }
-
-  function get_posted_data() {
-    return $this->_posted;
-  }
-
-  function get_table_name() {
-    return $this->_table_name;
-  }
-
-  function get_schema() {
-    return $this->_schema;
-  }
-
-  // @return Array: escaped array
-  // @params
-  //  $string_array Array of Strings
-  function escape_array($string_array) {
-    $new_array = array();
-    foreach ($string_array as $key=>$string) {
-      $new_array[$key] = self::escape($string);
+  // @return String: data type for the given field
+  // @params:
+  //  $fieldname String
+  function _get_field_datatype($fieldname) {
+    $datatype = 'string'; // set a default
+    if (!empty($this->_schema[$fieldname]['type'])) {
+      $datatype = $this->_schema[$fieldname]['type'];
     }
-    return $new_array;
+    return $datatype;
   }
 
-
-// SQL abstractions ---------------------------------------------
+  // @static
+  // @return String: quoted string
+  // @params:
+  //  $value String
+  //  $data_type String: (string, text, datetime, date)
+  function quote_wrap($value, $data_type) {
+    if (in_array($data_type, array('string','integer','text','datetime','date'))) {
+      return "'".$value."'";
+    }
+    return $value;
+  }
 
   // @return String: SQL statement
   // @params
   //  $table_name String: name of the table
   //  $data Array: data to be inserted
   //  $options Array: 'timestamp'=>true
-  function insert_into($table_name, $data, $options=array()) {
+  function insert($table_name, $data, $options=array()) {
     if (!empty($options['timestamps'])) {
       $current_datetime = date('Y-m-d H:i:s');
       $data['created_at'] = $current_datetime;
@@ -69,7 +55,7 @@ class Model extends Validator {
     $is_first = true;
     foreach ($data as $key=>$value) {
       $field_strings .= ($is_first?'':', ').$key;
-      $value_strings .= ($is_first?'':', ').$this->_quote_wrap($value, $this->_get_field_datatype($key));
+      $value_strings .= ($is_first?'':', ').Model::quote_wrap($value, $this->_get_field_datatype($key));
       $is_first = false;
     }
     $sql .= '('.$field_strings.')';
@@ -77,7 +63,7 @@ class Model extends Validator {
     $sql .= '('.$value_strings.')';
     return $sql;
   }
-
+  
   // @return String: SQL statement
   // @params
   //  $table_name String: name of the table
@@ -91,24 +77,34 @@ class Model extends Validator {
     }
     $sql = "UPDATE {$table_name} SET ";
     $is_first = true;
+    // we want the boolean fields to update their value to 0 if not checked
+    $boolean_fields = array_flip(
+      array_keys(filter($this->get_fields(), f('$f', 'return $f["type"] == "boolean";'))));
+    $data = array_merge($boolean_fields, $data);
+
     foreach ($data as $key=>$value) {
       $type = $this->_get_field_datatype($key);
       if ($type == 'boolean') { $value = $value ? '1' : '0'; }
-      $sql .= ($is_first?'':', ').$key.'='.$this->_quote_wrap($value, $type);
+      $sql .= ($is_first?'':', ').$key.'='.Model::quote_wrap($value, $type);
       $is_first = false;
     }
-    $is_first = true;
     $sql .= ' '.$this->where($conditions);
     return $sql;
   }
 
-  // @return String: SQL statement
+  // @return Array: escaped array
   // @params
-  //  $table_name String: name of the table
-  //  $conditions Array: array of conditions (k=>v or just string values)
-  function delete_from($table_name, $conditions) {
-    $sql = "DELETE FROM {$table_name} ";
-    return $sql . $this->where($conditions);
+  //  $string_array Array of Strings
+  function escape_array($string_array) {
+    $new_array = array();
+    foreach ($string_array as $key=>$string) {
+      $new_array[$key] = Model::escape($string);
+    }
+    return $new_array;
+  }
+
+  function escape($string) {
+    return mysql_real_escape_string($string);
   }
 
   // @return String: SQL statement
@@ -120,78 +116,16 @@ class Model extends Validator {
     foreach ($conditions as $key=>$value) {
       if (is_int($key)) {
         $sql .= ($is_first?'':' AND ').$value;
-      }
-      else
-      {
-        $sql .= ($is_first?'':' AND ').$key.'='.$this->_quote_wrap($value, $this->_get_field_datatype($key));
+      } else {
+        $sql .= ($is_first?'':' AND ').$key.'='.Model::quote_wrap($value, $this->_get_field_datatype($key));
       }
       $is_first = false;
     }
     return $sql;
   }
 
-
-// ezSQL proxy methods ------------------------------------------
-
-  function query($sql) {
-    return $this->_db->query($sql);
-  }
-
-  function get_results($sql) {
-    return $this->_db->get_results($sql);
-  }
-
-  function get_row($sql) {
-    return $this->_db->get_row($sql);
-  }
-
-  function escape($string) {
-    return mysql_real_escape_string($string);
-  }
-
-
-// Filters ------------------------------------------------------
-
-  function before_save() { }
-
-  function after_save() { }
-
-
-// --------------------------------------------------------------
-// private
-
-  // @return String: data type for the given field
-  // @params:
-  //  $fieldname String
-  function _get_field_datatype($fieldname) {
-    $datatype = 'string'; // set a default
-    if (!empty($this->_schema[$fieldname]['data_type'])) {
-      $datatype = $this->_schema[$fieldname]['data_type'];
-    }
-    elseif (!empty($this->_schema[$fieldname]['type']) && 
-            in_array($this->_schema[$fieldname]['type'], array('text','radio','select'))) {
-      $datatype = 'string';
-    }
-    return $datatype;
-  }
-
-  // @return String: quoted string
-  // @params:
-  //  $value String
-  //  $data_type String: (string, text, datetime, date)
-  function _quote_wrap($value, $data_type) {
-    if (in_array($data_type, array('string','text','datetime','date'))) {
-      return "'".$value."'";
-    }
-    return $value;
-  }
-
-
-// --------------------------------------------------------------
-// protected
-
   function _sluggize($str, $separator='_') {
     return sluggize($str, $separator);
   }
-
 }
+
