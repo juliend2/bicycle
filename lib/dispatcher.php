@@ -1,61 +1,42 @@
 <?php
 
-class Dispatcher {
+function dispatch_url($uri, $is_multilingual=false) {
+  $locale = '';
+  $params = array();
+  $param_separator = ':';
+  $segments = explode('/', $uri);
 
-  var $_uri = '';
-  var $_is_multilingual = false;
-  var $_locale = '';
-  var $_params = array();
-  var $_param_separator = ':';
-  var $_segments = '';
-
-  function Dispatcher($uri, $is_multilingual=false) {
-    $this->_segments = explode('/', $uri);
-    $this->_is_multilingual = $is_multilingual;
-
-    $this->_parse_uri();
+  if (!empty($segments) && $segments[0] ==='') { // remove empty element
+    array_shift($segments);
+  }
+  // remove empty element (the other side of an empty '/') :
+  if (!empty($segments) && count($segments) === 1 && $segments[0] ==='') {  
+    array_shift($segments);
+  }
+  if ($is_multilingual && 
+      (isset($segments[0]) && strpos($segments[0], ':') === false)) {
+    $locale = array_shift($segments);
   }
 
-  function get_segments() {
-    return $this->_segments;
-  }
+  foreach ($segments as $k=>$segment) { # populate params array
+    # TODO: remember to NOT allow ":" characters on slug values during pages validation
 
-  function get_locale() {
-    return $this->_locale;
-  }
+    $found = strpos($segment, $param_separator);
 
-  function get_params() {
-    return $this->_params;
-  }
-
-  function _parse_uri() {
-    if (!empty($this->_segments) && $this->_segments[0] ==='') { // remove empty element
-      array_shift($this->_segments);
-    }
-    if (!empty($this->_segments) && count($this->_segments) === 1 && $this->_segments[0] ==='') { // remove empty element (the other side of an empty '/') 
-      array_shift($this->_segments);
-    }
-
-    if ($this->_is_multilingual && (isset($this->_segments[0]) && strpos($this->_segments[0], ':') === false)) {
-      $this->_locale = array_shift($this->_segments);
-    }
-
-    foreach ($this->_segments as $k=>$segment) { # populate params array
-      # TODO: remember to NOT allow ":" characters on slug values during pages validation
-
-      $found = strpos($segment, $this->_param_separator);
-
-      if ( $found !== false               # Found the ":" character and
-        && $found !== 0                   # it's Not the first char of segment and
-        && $found !== strlen($segment)-1) # it's Not the last char of the segment
-      {
-        $split_segment = explode($this->_param_separator, $segment);
-        $this->_params[ $split_segment[0] ] = $split_segment[1];
-        unset($this->_segments[$k]);
-      }
+    if ( $found !== false               # Found the ":" character and
+      && $found !== 0                   # it's Not the first char of segment and
+      && $found !== strlen($segment)-1) # it's Not the last char of the segment
+    {
+      $split_segment = explode($param_separator, $segment);
+      $params[ $split_segment[0] ] = $split_segment[1];
+      unset($segments[$k]);
     }
   }
+
+  return array(
+    'segments' => $segments,
+    'params'   => $params,
+    'locale'   => $locale
+  );
 }
-
-
 
