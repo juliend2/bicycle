@@ -14,25 +14,21 @@ $schema = array(
     'human_name'=>'Email',
     'type'=>'string',
     'rules'=>array('not_empty'),
-    'data_type'=>'string'
   ),
   'password'=> array(
     'human_name'=>'Password',
     'type'=>'string',
     'rules'=>array('not_empty'),
-    'data_type'=>'string'
   ),
   'content'=> array(
     'human_name'=>'Content',
     'type'=>'text',
     'rules'=>array('not_empty'),
-    'data_type'=>'string'
   ),
   'country'=> array(
     'human_name'=>'Country',
     'type'=>'select',
     'rules'=>array('not_empty'),
-    'data_type'=>'string'
   )
 );
 

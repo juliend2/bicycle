@@ -8,12 +8,17 @@ class Model {
     $this->_schema = $schema;
   }
 
+  function get_fields() {
+    return $this->fields;
+  }
+
   // Filters
 
   function before_validate() {}
   function after_validate() {}
   function before_save() {}
   function after_save() {}
+
 
   // @return String: data type for the given field
   // @params:
