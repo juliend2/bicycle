@@ -62,9 +62,40 @@ function text_area($rules, $field_name, $value = null) {
   $valid = field_is_valid($rules, $field_name);
   return array(
     'valid' => $valid,
-    'html' => '<p class="'.($valid?'':'not_valid').' field" >'
+    'html' => '<p class="'.($valid?'':'not_valid').' field">'
       . label($field_name).'<textarea name="'.$field_name.'" id="'.$field_name.'_field">'
       . field_value($field_name, $value)."</textarea></p>\n"
+  );
+}
+
+function select_options($options, $value = null) {
+  $s = '';
+  foreach ($options as $k=>$option) {
+    $selected = ($value === $k) ? 'selected="selected"' : '';
+    $s .= '<option value="'.$k.'" '.$selected.'>'.$option.'</option>';
+  }
+  return $s;
+}
+
+function select($rules, $field_name, $options, $value = null) {
+  $valid = field_is_valid($rules, $field_name);
+  return array(
+    'valid' => $valid,
+    'html' => '<p class="'.($valid?'':'not_valid').' field">'
+      . label($field_name).'<select id="'.$field_name.'_field" name="'.$field_name.'">'
+      . select_options($options)
+      . '</select></p>'
+  );
+}
+
+function checkbox($rules, $field_name, $value = null) {
+  $valid = field_is_valid($rules, $field_name);
+  return array(
+    'valid' => $valid,
+    'html' => '<p class="'.($valid?'':'not_valid').' field">'
+      . label($field_name).'<input id="'.$field_name.'_field" '
+      . (is_null($value) ? '' : 'checked="checked"')
+      . " type='checkbox' name='".$field_name."' /></p>\n"
   );
 }
 
