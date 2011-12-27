@@ -46,7 +46,7 @@ function _human_field_name($field_name) {
 function _select_options($options, $value = null) {
   $s = '';
   foreach ($options as $k=>$option) {
-    $selected = ($value === $k) ? 'selected="selected"' : '';
+    $selected = ($value == $k) ? 'selected="selected"' : '';
     $s .= '<option value="'.$k.'" '.$selected.'>'.$option.'</option>';
   }
   return $s;
