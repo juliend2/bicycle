@@ -1,16 +1,21 @@
 <?php
 
-function form(/* action, method, [fields ...] */) {
+function form(/* options, [fields ...] */) {
+  $default_options = array(
+    'action' => '',
+    'method' => 'post',
+    'submit_button' => 'Submit'
+  );
   $args = func_get_args();
-  $action = array_shift($args);
-  $methods = array_shift($args);
+  $options = array_shift($args);
+  $opts = array_merge($default_options, $options);
   $valid = true;
-  $s = "<form action='$action' method='$methods'>\n";
+  $s = "<form action='{$opts['action']}' method='{$opts['method']}'>\n";
   foreach ($args as $field) { // remaining args are fields...
     $s .= $field['html'];
     if ($field['valid']===false) { $valid = false; }
   }
-  $s .= "<input type='submit'/>\n";
+  $s .= "<input type='submit' value='{$opts['submit_button']}'/>\n";
   $s .= "</form>\n";
   return array(
     'valid' => $valid,
@@ -24,7 +29,7 @@ function field_is_valid($rules, $field_name) {
       if ($rule == 'not_empty' && trim($_POST[$field_name]) === '') {
         return false;
       }
-      // TODO: add more rules here ...
+      // TODO: add more validation rules here ...
     }
   }
   return true;
