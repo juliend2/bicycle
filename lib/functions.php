@@ -134,6 +134,14 @@ function map($array, $callback) {
   return array_map($callback, $array);
 }
 
+// same as map, but you can pass an associative array and have 2 arguments 
+// in your callback
+function hash_map($array, $callback) {
+  $keys = array_keys($array);
+  $values = array_values($array);
+  return array_map($callback, $keys, $values);
+}
+
 function filter($array, $callback) {
   return array_filter($array, $callback);
 }

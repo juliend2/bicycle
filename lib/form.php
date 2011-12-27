@@ -30,22 +30,40 @@ function field_is_valid($rules, $field_name) {
   return true;
 }
 
-function human_field_name($field_name) {
-  return strtr($field_name, '_', ' ');
-}
-
-function label($field_name, $field_human_name = null) {
-  $field_human_name = is_null($field_human_name) ? human_field_name($field_name) : $field_human_name;
-  return "<label for='$field_name'>$field_human_name</label>\n";
-}
-
 function field_value($field_name, $value = null) {
   return isset($_POST[$field_name]) ? $_POST[$field_name] : (is_null($value)?'':$value);
 }
 
+function _human_field_name($field_name) {
+  return strtr($field_name, '_', ' ');
+}
+
+function _select_options($options, $value = null) {
+  $s = '';
+  foreach ($options as $k=>$option) {
+    $selected = ($value === $k) ? 'selected="selected"' : '';
+    $s .= '<option value="'.$k.'" '.$selected.'>'.$option.'</option>';
+  }
+  return $s;
+}
+
+function label($field_name, $field_human_name = null) {
+  $field_human_name = is_null($field_human_name) ? _human_field_name($field_name) : $field_human_name;
+  return "<label for='$field_name'>$field_human_name</label>\n";
+}
+
 // _.o0()0o._.o0()0o._.o0()0o._.o0()0o._.o0()0o._.o0()0o._.o0()0o._.o0()0o._
-// ## FIELD NAMES ##########################################################
+// ## FIELD TYPES ##########################################################
 // ‾°•0()0•°‾°•0()0•°‾°•0()0•°‾°•0()0•°‾°•0()0•°‾°•0()0•°‾°•0()0•°‾°•0()0•°‾
+
+function hidden($rules, $field_name, $value = null) {
+  $valid = field_is_valid($rules, $field_name);
+  return array(
+    'valid' => $valid,
+    'html' => '<input id="'.$field_name.'_field" '
+      . " type='hidden' name='$field_name' value='1' />\n"
+  );
+}
 
 function text($rules, $field_name, $value = null) {
   $valid = field_is_valid($rules, $field_name);
@@ -68,33 +86,26 @@ function text_area($rules, $field_name, $value = null) {
   );
 }
 
-function select_options($options, $value = null) {
-  $s = '';
-  foreach ($options as $k=>$option) {
-    $selected = ($value === $k) ? 'selected="selected"' : '';
-    $s .= '<option value="'.$k.'" '.$selected.'>'.$option.'</option>';
-  }
-  return $s;
-}
-
 function select($rules, $field_name, $options, $value = null) {
   $valid = field_is_valid($rules, $field_name);
   return array(
     'valid' => $valid,
     'html' => '<p class="'.($valid?'':'not_valid').' field">'
       . label($field_name).'<select id="'.$field_name.'_field" name="'.$field_name.'">'
-      . select_options($options)
+      . _select_options($options, $value)
       . '</select></p>'
   );
 }
 
 function checkbox($rules, $field_name, $value = null) {
   $valid = field_is_valid($rules, $field_name);
+  $hidden = hidden($rules, $field_name, '1');
   return array(
     'valid' => $valid,
     'html' => '<p class="'.($valid?'':'not_valid').' field">'
       . label($field_name).'<input id="'.$field_name.'_field" '
-      . (is_null($value) ? '' : 'checked="checked"')
-      . " type='checkbox' name='".$field_name."' /></p>\n"
+      . ($value ? 'checked="checked"' : '' )
+      . " type='checkbox' name='$field_name' value='1' /></p>\n"
   );
 }
+
