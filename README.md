@@ -1,13 +1,13 @@
 # WARNING: DON'T USE THIS.
 ## This is an old codebase with many CRITICAL security vulnerabilities.
-One needs to write a lot of bad code in order to become better. :)
+One needs to write a lot of bad code in order to get better one day. :)
 
 <br/><br/><br/><br/><br/><br/>
-
+<br/><br/><br/><br/><br/><br/>
 
 * * *
 
-<br/><br/><br/><br/><br/><br/>
+
 
 Bicycle
 =======
